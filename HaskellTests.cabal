@@ -14,7 +14,9 @@ executable HaskellTests
                    conduit >=1.2 && <1.3,
                    text >=1.1 && <1.2
   ghc-options:     -Wall
-  other-modules:   MonoidTest
+  other-modules:   
+                   MonoidTest,
+                   MultiwayIf
 
 test-suite TestSuite
   type:            exitcode-stdio-1.0
@@ -24,7 +26,8 @@ test-suite TestSuite
   other-modules:   
                   Main,
                   MonoidTest,
-                  MonoidTestTest
+                  MonoidTestTest,
+                  MultiwayIf
   hs-source-dirs:  
                   tests,
                   src
