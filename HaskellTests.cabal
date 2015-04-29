@@ -16,3 +16,16 @@ executable HaskellTests
   ghc-options:     -Wall
   other-modules:   MonoidTest
 
+test-suite TestSuite
+  type:            exitcode-stdio-1.0
+  main-is:         TestSuite.hs
+  ghc-options:     -Wall -rtsopts
+  build-depends:   base >= 4, tasty > 0.10, tasty-hunit, HUnit, tasty-quickcheck, QuickCheck
+  other-modules:   
+                  Main,
+                  MonoidTest,
+                  MonoidTestTest
+  hs-source-dirs:  
+                  tests,
+                  src
+

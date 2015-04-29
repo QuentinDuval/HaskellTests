@@ -7,11 +7,11 @@ import Data.Function
 import Data.Text
 
 
-data Person = SortableTest {
+data Person = Person {
    _lastName   :: Text,
    _firstName  :: Text,
    _age        :: Int
-}
+} deriving (Show)
 
 instance Eq Person where
    lhs == rhs = EQ == compare' lhs rhs
