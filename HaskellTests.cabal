@@ -27,7 +27,8 @@ test-suite TestSuite
                   Main,
                   MonoidTest,
                   MonoidTestTest,
-                  MultiwayIf
+                  MultiwayIf,
+                  MultiwayIfTests
   hs-source-dirs:  
                   tests,
                   src
