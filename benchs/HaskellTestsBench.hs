@@ -3,8 +3,11 @@ module HaskellTestsBench where
 
 import Criterion.Main
 import MemoizationBench
+import System.IO
 
 
 main :: IO()
-main = defaultMain [ memoizationBenchs ]
+main = do
+   hSetEncoding stdout utf8 
+   defaultMain [ memoizationBenchs ]
 

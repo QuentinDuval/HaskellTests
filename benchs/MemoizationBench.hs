@@ -6,7 +6,7 @@ import Memoization
 
 memoizationBenchs :: Benchmark
 memoizationBenchs = bgroup "memoization"
-   [ bench "noMemoF"      $ nf noMemoF 100000
-   , bench "withMemoL"    $ nf withMemoL 100000
-   , bench "withMemoV"    $ nf withMemoV 100000
-   , bench "withMemoMV"   $ nf withMemoMV 100000 ]
+   [ bench "noMemoF"      $ whnf noMemoF 100000
+   , bench "withMemoL"    $ whnf withMemoL 100000
+   , bench "withMemoV"    $ whnf withMemoV 100000
+   , bench "withMemoMV"   $ whnf withMemoMV 100000 ]
