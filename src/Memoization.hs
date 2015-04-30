@@ -5,7 +5,6 @@ import Control.Applicative
 import Control.Monad
 import Control.Monad.Identity
 import Control.Monad.ST
-import Data.List
 import Data.Maybe
 import qualified Data.Map.Lazy as M
 import qualified Data.HashMap.Lazy as HM
@@ -63,20 +62,20 @@ withMemoVect n =
 
 -- | Attempts with mutable data structures
 
-withMemoMutMap :: Int -> Int
-withMemoMutMap n = runST $ do
-   ht <- MHM.newSized (n+1)
-   let recf n = fromJust <$> MHM.lookup ht n
-   forM_ [0..n] $ \i -> MHM.insert ht i =<< fm recf i
-   fromJust <$> MHM.lookup ht n
-
 withMemoMutVect :: Int -> Int
 withMemoMutVect n =
    V.last $ V.create $ do
       xs <- MV.new (n + 1)
-      let recf = MV.read xs
-      forM_ [0..n] $ \i -> MV.write xs i =<< fm recf i
+      let recf = MV.unsafeRead xs
+      forM_ [0..n] $ \i -> MV.unsafeWrite xs i =<< fm recf i
       return xs
+
+withMemoMutMap :: Int -> Int
+withMemoMutMap n = runST $ do
+   ht <- MHM.newSized (n+1)
+   let recf i = fromJust <$> MHM.lookup ht i
+   forM_ [0..n] $ \i -> MHM.insert ht i =<< fm recf i
+   fromJust <$> MHM.lookup ht n
 
 
 -- | Edward Kmett's solution from http://stackoverflow.com/questions/3208258/memoization-in-haskell

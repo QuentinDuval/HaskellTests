@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns #-}
 module MemoizationBench where
 
 import Criterion
@@ -5,12 +6,14 @@ import Memoization
 
 
 memoizationBenchs :: Benchmark
-memoizationBenchs = bgroup "memoization"
-   [ bench "noMemoF"        $ nf noMemoF 100000
-   , bench "withMemoTree"   $ nf withMemoTree 100000
-   , bench "withMemoList"   $ nf withMemoList 100000
-   , bench "withMemoMap"    $ nf withMemoMap 100000
-   , bench "withMemoHMap"   $ nf withMemoHMap 100000
-   , bench "withMemoMutMap" $ nf withMemoMutMap 100000
-   , bench "withMemoVect"   $ nf withMemoVect 100000
-   , bench "withMemoMVect"  $ nf withMemoMutVect 100000 ]
+memoizationBenchs =
+   let !n = 100000
+   in bgroup "memoization"
+      [ bench "noMemoF"        $ nf noMemoF n
+      , bench "withMemoTree"   $ nf withMemoTree n
+      , bench "withMemoList"   $ nf withMemoList n
+      , bench "withMemoMap"    $ nf withMemoMap n
+      , bench "withMemoHMap"   $ nf withMemoHMap n
+      , bench "withMemoMutMap" $ nf withMemoMutMap n
+      , bench "withMemoVect"   $ nf withMemoVect n
+      , bench "withMemoMVect"  $ nf withMemoMutVect n ]

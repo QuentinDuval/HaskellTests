@@ -32,7 +32,8 @@ test-suite TestSuite
                   MonoidTestTest,
                   MultiwayIf,
                   MultiwayIfTests,
-                  Memoization
+                  Memoization,
+                  MemoizationTest
   hs-source-dirs:  
                   tests,
                   src
