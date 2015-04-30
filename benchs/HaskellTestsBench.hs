@@ -1,4 +1,4 @@
-module HaskellTestsBench where
+module Main where
 
 
 import Criterion.Main

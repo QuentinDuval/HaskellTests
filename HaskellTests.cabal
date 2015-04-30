@@ -1,6 +1,6 @@
 name:           HaskellTests
 version:        0.1
-cabal-version:  >=1.2
+cabal-version:  >= 1.2
 build-type:     Simple
 author:         Quentin Duval
 
@@ -35,21 +35,18 @@ test-suite TestSuite
                   tests,
                   src
 
-
 benchmark HaskellTestsBench
   type:            exitcode-stdio-1.0
-  main-is:         HaskellTestsBench.hs
-  ghc-options:     -Wall -O2 -rtsopts
   build-depends:   
                    base >= 4,
                    criterion >= 1.0 && < 1.1
+  hs-source-dirs:  
+                   benchs, 
+                   src
+  ghc-options:     -Wall -O2 -rtsopts
+  main-is:         HaskellTestsBench.hs
   other-modules:   
                    HaskellTestsBench,
                    Memoization,
                    MemoizationBench
-  hs-source-dirs:  
-                   benchs, 
-                   src
-  
-  
 
