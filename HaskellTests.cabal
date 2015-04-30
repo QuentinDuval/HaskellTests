@@ -39,12 +39,15 @@ test-suite TestSuite
 
 benchmark HaskellTestsBench
   type:            exitcode-stdio-1.0
-  main-is:         MemoizationBench.hs
+  main-is:         HaskellTestsBench.hs
   ghc-options:     -Wall -O2 -rtsopts
   build-depends:   
                    base >= 4,
                    criterion >=1.1 && <1.2
-  other-modules:   Memoization
+  other-modules:   
+                   HaskellTestsBench,
+                   Memoization,
+                   MemoizationBench
   hs-source-dirs:  
                    benchs, 
                    src
