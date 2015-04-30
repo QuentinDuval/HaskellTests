@@ -38,7 +38,7 @@ withMemoV n = runIdentity $
 withMemoMV :: Int -> Int
 withMemoMV n =
    V.last $ V.create $ do
-      xs <- MV.replicate (n + 1) 0
+      xs <- MV.new (n + 1)
       let recf = MV.read xs
       forM_ [0..n] $ \i -> MV.write xs i =<< f recf i
       return xs
