@@ -42,7 +42,7 @@ benchmark HaskellTestsBench
   ghc-options:     -Wall -O2 -rtsopts
   build-depends:   
                    base >= 4,
-                   criterion >=1.1 && <1.2
+                   criterion >= 1.0 && < 1.1
   other-modules:   
                    HaskellTestsBench,
                    Memoization,
