@@ -1,4 +1,4 @@
-{-# LANGUAGE RecordWildCards, MultiWayIf #-}
+{-# LANGUAGE RecordWildCards, MultiWayIf, ScopedTypeVariables #-}
 module Memoization where
 
 import Control.Applicative
@@ -7,7 +7,7 @@ import Control.Monad.Identity
 import Control.Monad.ST
 import Data.List
 import Data.Maybe
-import qualified Data.Map as M
+import qualified Data.Map.Lazy as M
 import qualified Data.HashMap.Lazy as HM
 import qualified Data.HashTable.ST.Linear as MHM
 import qualified Data.Vector as V
@@ -28,38 +28,31 @@ fm recf n = do
    return $ max n (sum recs)
 
 
+-- | No memoization of any kind
+
 noMemoF :: Int -> Int
 noMemoF = fix f
 
 
+-- | Simple data structures
+
 withMemoList :: Int -> Int
 withMemoList n =
    let xs = f recf <$> [0 .. n]
-       recf = genericIndex xs
+       recf = (!!) xs
    in last xs
 
-
 withMemoMap :: Int -> Int
-withMemoMap n = 
-   let xs = foldl (\m k -> M.insert k (f recf k) m) M.empty [0..n]
-       recf n = fromJust $ M.lookup n xs
-   in fromJust $ M.lookup n xs
-
+withMemoMap n =
+   let xs = f recf <$> M.fromList (zip [0..n] [0..n])
+       recf = (M.!) xs
+   in xs M.! n
 
 withMemoHMap :: Int -> Int
 withMemoHMap n = 
-   let xs = foldl (\m k -> HM.insert k (f recf k) m) HM.empty [0..n]
-       recf n = fromJust $ HM.lookup n xs
-   in fromJust $ HM.lookup n xs
-
-
-withMemoMutMap :: Int -> Int
-withMemoMutMap n = runST $ do
-   ht <- MHM.newSized (n+1)
-   let recf n = fromJust <$> MHM.lookup ht n
-   forM_ [0..n] $ \i -> MHM.insert ht i =<< fm recf i
-   fromJust <$> MHM.lookup ht n
-
+   let xs = f recf <$> HM.fromList (zip [0..n] [0..n])
+       recf = (HM.!) xs
+   in xs HM.! n
 
 withMemoVect :: Int -> Int
 withMemoVect n =
@@ -67,6 +60,15 @@ withMemoVect n =
        recf = (V.!) xs
    in V.last xs
 
+
+-- | Attempts with mutable data structures
+
+withMemoMutMap :: Int -> Int
+withMemoMutMap n = runST $ do
+   ht <- MHM.newSized (n+1)
+   let recf n = fromJust <$> MHM.lookup ht n
+   forM_ [0..n] $ \i -> MHM.insert ht i =<< fm recf i
+   fromJust <$> MHM.lookup ht n
 
 withMemoMutVect :: Int -> Int
 withMemoMutVect n =
