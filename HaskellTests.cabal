@@ -24,7 +24,7 @@ test-suite TestSuite
   type:            exitcode-stdio-1.0
   main-is:         TestSuite.hs
   ghc-options:     -Wall -rtsopts
-  build-depends:   base >= 4, tasty > 0.10, tasty-hunit, HUnit, tasty-quickcheck, QuickCheck
+  build-depends:   base >= 4, tasty >= 0.10.1.1, tasty-hunit, HUnit, tasty-quickcheck, QuickCheck
   other-modules:   
                   Main,
                   MonoidTest,
@@ -35,4 +35,19 @@ test-suite TestSuite
   hs-source-dirs:  
                   tests,
                   src
+
+
+benchmark HaskellTestsBench
+  type:            exitcode-stdio-1.0
+  main-is:         MemoizationBench.hs
+  ghc-options:     -Wall -O2 -rtsopts
+  build-depends:   
+                   base >= 4,
+                   criterion >=1.1 && <1.2
+  other-modules:   Memoization
+  hs-source-dirs:  
+                   benchs, 
+                   src
+  
+  
 
