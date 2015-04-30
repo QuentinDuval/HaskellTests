@@ -6,5 +6,5 @@ import MemoizationBench
 
 
 main :: IO()
-main = defaultMain [bgroup "memoization" memoizationBenchs]
+main = defaultMain [ memoizationBenchs ]
 
