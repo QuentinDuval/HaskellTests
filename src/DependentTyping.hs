@@ -1,4 +1,4 @@
-{-# LANGUAGE TypeFamilies, EmptyDataDecls, DataKinds, UndecidableInstances,
+{-# LANGUAGE TypeFamilies, DataKinds, UndecidableInstances,
     GADTs, RankNTypes, FlexibleInstances, FlexibleContexts #-}
 
 module DependentTyping where
@@ -84,7 +84,6 @@ testMatrix =
        r2 = Row (Snoc (Snoc NilV 3) (4::Int))
        r3 = Row (Cons 5 (Cons (6::Int) NilV))
    in AddRow (AddRow r1 r2) r3
-
 
 testDT :: IO ()
 testDT = do 
