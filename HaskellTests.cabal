@@ -19,7 +19,8 @@ executable HaskellTests
   other-modules:   
                    MonoidTest,
                    MultiwayIf,
-                   Memoization
+                   Memoization,
+                   DependentTyping
 
 test-suite TestSuite
   type:            exitcode-stdio-1.0
@@ -33,7 +34,8 @@ test-suite TestSuite
                   MultiwayIf,
                   MultiwayIfTests,
                   Memoization,
-                  MemoizationTest
+                  MemoizationTest,
+                  DependentTyping
   hs-source-dirs:  
                   tests,
                   src
@@ -51,5 +53,6 @@ benchmark HaskellTestsBench
   other-modules:   
                    HaskellTestsBench,
                    Memoization,
-                   MemoizationBench
+                   MemoizationBench,
+                   DependentTyping
 
