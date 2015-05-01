@@ -1,4 +1,5 @@
-{-# LANGUAGE TypeFamilies, EmptyDataDecls, DataKinds, GADTs, RankNTypes #-}
+{-# LANGUAGE TypeFamilies, EmptyDataDecls, DataKinds, UndecidableInstances,
+    GADTs, RankNTypes, FlexibleInstances, FlexibleContexts #-}
 
 module DependentTyping where
 
@@ -36,5 +37,21 @@ testMatrix =
    in AddRow (AddRow r1 r2) r3
 
 
--- toList :: Vector  
+type family ItemT v
+type instance ItemT (Vector a n) = a
+type instance ItemT (Matrix a m n) = a
+
+class ToList v where
+   toList :: v -> [ItemT v]
+
+instance ToList (Vector a Zero) where
+   toList _ = []
+
+instance (ToList (Vector a n)) => ToList (Vector a (Succ n)) where
+   toList (Cons a v) = a : toList v
+
+instance (Show a, ToList (Vector a n)) => Show (Vector a n) where
+   show v = show (toList v)
+
+
 
