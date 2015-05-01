@@ -26,7 +26,6 @@ data Vector a (s :: Nat) where
 data Matrix a (m :: Nat) (n :: Nat) where
    Row      :: Vector a (Succ n) -> Matrix a One (Succ n)
    AddRow   :: Matrix a m n -> Matrix a One n -> Matrix a (Succ m) n
-   Mult     :: Matrix a m k -> Matrix a k n -> Matrix a m n
 
 
 testMatrix :: Matrix Int Three Two
@@ -41,6 +40,7 @@ type family ItemT v
 type instance ItemT (Vector a n) = a
 type instance ItemT (Matrix a m n) = a
 
+
 class ToList v where
    toList :: v -> [ItemT v]
 
@@ -50,6 +50,14 @@ instance ToList (Vector a Zero) where
 instance (ToList (Vector a n)) => ToList (Vector a (Succ n)) where
    toList (Cons a v) = a : toList v
    toList (Snoc v a) = toList v ++ [a]
+
+instance ToList (Matrix a Zero m) where
+   toList _ = []
+
+instance (ToList (Matrix a m n), ToList (Vector a n)) => ToList (Matrix a (Succ m) n) where
+   toList (Row v)      = toList v
+   toList (AddRow m r) = toList m ++ toList r
+
 
 instance (Show a, ToList (Vector a n)) => Show (Vector a n) where
    show v = show (toList v)
