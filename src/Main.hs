@@ -5,5 +5,5 @@ import Memoization
 
 main::IO()
 main = do
-   let res = noMemoF 10000000
+   let res = withMemoTree {-10000000-} 1000000000000000000000000000
    print res

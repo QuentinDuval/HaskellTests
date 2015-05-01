@@ -85,14 +85,14 @@ data InfiniteTree a = Tree { value :: a, left, right :: InfiniteTree a }
 instance Functor InfiniteTree where
    fmap f' Tree{..} = Tree { value = f' value, left = fmap f' left, right = fmap f' right } 
 
-treeIdx :: InfiniteTree a -> Int -> a
+treeIdx :: (Integral n) => InfiniteTree a -> n -> a
 treeIdx t 0        = value t
 treeIdx Tree{..} n =
    let (q, r) = (n - 1) `divMod` 2
    in if | r == 0 -> treeIdx left q
          | r == 1 -> treeIdx right q 
  
-allTreeIndices :: InfiniteTree Int
+allTreeIndices :: (Integral n) => InfiniteTree n
 allTreeIndices = go 0 1 where
    go pos level =
       let level' = 2 * level
@@ -103,7 +103,7 @@ allTreeIndices = go 0 1 where
 treeToList :: InfiniteTree a -> [a]
 treeToList t = treeIdx t <$> [0..]
 
-withMemoTree :: Int -> Int
+withMemoTree :: (Integral n) => n -> n
 withMemoTree n =
    let xs = f recf <$> allTreeIndices
        recf = treeIdx xs
