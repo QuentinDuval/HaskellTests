@@ -45,3 +45,4 @@ Temporary Items
 .dist-buildwrapper
 dist
 *.prefs
+*.hp
