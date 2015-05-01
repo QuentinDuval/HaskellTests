@@ -49,9 +49,11 @@ instance ToList (Vector a Zero) where
 
 instance (ToList (Vector a n)) => ToList (Vector a (Succ n)) where
    toList (Cons a v) = a : toList v
+   toList (Snoc v a) = toList v ++ [a]
 
 instance (Show a, ToList (Vector a n)) => Show (Vector a n) where
    show v = show (toList v)
 
+ 
 
 
