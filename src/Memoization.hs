@@ -2,10 +2,9 @@
 module Memoization where
 
 import Control.Applicative
-import Control.Monad
 import Control.Monad.Identity
 import Control.Monad.ST
-import Data.Maybe
+import Control.Monad.State
 import qualified Data.Map.Lazy as M
 import qualified Data.HashMap.Lazy as HM
 import qualified Data.HashTable.ST.Linear as MHM
@@ -58,6 +57,36 @@ withMemoVect n =
        recf = (V.!) xs
    in V.last xs
 
+
+-- | Attempts with state monad and immutable associative containers
+
+withMemoStMap :: Int -> Int
+withMemoStMap n = evalState (fm recF n) M.empty
+   where
+      recF :: Int -> State (M.Map Int Int) Int
+      recF i = do
+         ht <- get
+         case M.lookup i ht of
+            Just k' -> return k' 
+            Nothing -> do
+               k' <- fm recF i
+               put $ M.insert i k' ht
+               return k'
+ 
+ 
+withMemoStHMap :: Int -> Int
+withMemoStHMap n = evalState (fm recF n) HM.empty
+   where
+      recF :: Int -> State (HM.HashMap Int Int) Int
+      recF i = do
+         ht <- get
+         case HM.lookup i ht of
+            Just k' -> return k' 
+            Nothing -> do
+               k' <- fm recF i
+               put $ HM.insert i k' ht
+               return k'
+ 
 
 -- | Attempts with mutable data structures
 
