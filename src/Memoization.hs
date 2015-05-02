@@ -37,25 +37,25 @@ noMemoF = fix f
 
 withMemoList :: Int -> Int
 withMemoList n =
-   let xs = f recf <$> [0 .. n]
+   let xs = [f recf i | i <- [0..n]]
        recf = (!!) xs
    in last xs
 
 withMemoMap :: Int -> Int
 withMemoMap n =
-   let xs = f recf <$> M.fromList (zip [0..n] [0..n])
+   let xs = M.fromList [(i, f recf i) | i <- [0..n]]
        recf = (M.!) xs
    in xs M.! n
 
 withMemoHMap :: Int -> Int
 withMemoHMap n = 
-   let xs = f recf <$> HM.fromList (zip [0..n] [0..n])
+   let xs = HM.fromList [(i, f recf i) | i <- [0..n]]
        recf = (HM.!) xs
    in xs HM.! n
 
 withMemoVect :: Int -> Int
 withMemoVect n =
-   let xs = f recf <$> V.fromList [0.. n]
+   let xs = V.fromList [f recf i | i <- [0..n]]
        recf = (V.!) xs
    in V.last xs
 

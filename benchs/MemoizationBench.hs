@@ -6,7 +6,7 @@ import Memoization
 
 memoizationBenchs :: Benchmark
 memoizationBenchs =
-   let n = 100000
+   let n = 1000000
    in bgroup "memoization"
       [ bench "noMemoF"        $ nf noMemoF n
       , bench "withMemoTree"   $ nf withMemoTree n
