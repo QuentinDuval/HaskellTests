@@ -20,7 +20,8 @@ executable HaskellTests
                    MonoidTest,
                    MultiwayIf,
                    Memoization,
-                   DependentTyping
+                   DependentTyping,
+                   PhantomType
 
 test-suite TestSuite
   type:            exitcode-stdio-1.0
@@ -35,7 +36,8 @@ test-suite TestSuite
                   MultiwayIfTests,
                   Memoization,
                   MemoizationTest,
-                  DependentTyping
+                  DependentTyping,
+                  PhantomType
   hs-source-dirs:  
                   tests,
                   src
@@ -54,5 +56,6 @@ benchmark HaskellTestsBench
                    HaskellTestsBench,
                    Memoization,
                    MemoizationBench,
-                   DependentTyping
+                   DependentTyping,
+                   PhantomType
 
