@@ -1,4 +1,4 @@
-{-# LANGUAGE RecordWildCards, MultiWayIf, ScopedTypeVariables, BangPatterns #-}
+{-# LANGUAGE RecordWildCards, MultiWayIf, ScopedTypeVariables #-}
 module Memoization where
 
 import Control.Applicative
@@ -85,7 +85,7 @@ withMemoStHMap n = evalState (fm recF n) HMS.empty
          case k of
             Just k' -> return k' 
             Nothing -> do
-               !k' <- fm recF i
+               k' <- fm recF i
                modify $ HMS.insert i k'
                return k'
  
