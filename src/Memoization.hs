@@ -1,12 +1,14 @@
-{-# LANGUAGE RecordWildCards, MultiWayIf, ScopedTypeVariables #-}
+{-# LANGUAGE RecordWildCards, MultiWayIf, ScopedTypeVariables, BangPatterns #-}
 module Memoization where
 
 import Control.Applicative
 import Control.Monad.Identity
 import Control.Monad.ST
-import Control.Monad.State
+import Control.Monad.State.Strict
 import qualified Data.Map.Lazy as M
+import qualified Data.Map.Strict as MS
 import qualified Data.HashMap.Lazy as HM
+import qualified Data.HashMap.Strict as HMS
 import qualified Data.HashTable.ST.Linear as MHM
 import qualified Data.Vector as V
 
@@ -61,30 +63,30 @@ withMemoVect n =
 -- | Attempts with state monad and immutable associative containers
 
 withMemoStMap :: Int -> Int
-withMemoStMap n = evalState (fm recF n) M.empty
+withMemoStMap n = evalState (fm recF n) MS.empty
    where
-      recF :: Int -> State (M.Map Int Int) Int
+      recF :: Int -> State (MS.Map Int Int) Int
       recF i = do
-         ht <- get
-         case M.lookup i ht of
+         k <- MS.lookup i <$> get
+         case k of
             Just k' -> return k' 
             Nothing -> do
                k' <- fm recF i
-               put $ M.insert i k' ht
+               modify $ MS.insert i k'
                return k'
  
  
 withMemoStHMap :: Int -> Int
-withMemoStHMap n = evalState (fm recF n) HM.empty
+withMemoStHMap n = evalState (fm recF n) HMS.empty
    where
-      recF :: Int -> State (HM.HashMap Int Int) Int
+      recF :: Int -> State (HMS.HashMap Int Int) Int
       recF i = do
-         ht <- get
-         case HM.lookup i ht of
+         k <- HMS.lookup i <$> get
+         case k of
             Just k' -> return k' 
             Nothing -> do
-               k' <- fm recF i
-               put $ HM.insert i k' ht
+               !k' <- fm recF i
+               modify $ HMS.insert i k'
                return k'
  
 
