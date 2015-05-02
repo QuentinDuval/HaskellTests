@@ -10,7 +10,6 @@ import qualified Data.Map.Lazy as M
 import qualified Data.HashMap.Lazy as HM
 import qualified Data.HashTable.ST.Linear as MHM
 import qualified Data.Vector as V
-import qualified Data.Vector.Mutable as MV
 
 
 
@@ -33,7 +32,7 @@ noMemoF :: Int -> Int
 noMemoF = fix f
 
 
--- | Simple data structures
+-- | Simple lazy data structures
 
 withMemoList :: Int -> Int
 withMemoList n =
@@ -62,20 +61,20 @@ withMemoVect n =
 
 -- | Attempts with mutable data structures
 
-withMemoMutVect :: Int -> Int
-withMemoMutVect n =
-   V.last $ V.create $ do
-      xs <- MV.new (n + 1)
-      let recf = MV.unsafeRead xs
-      forM_ [0..n] $ \i -> MV.unsafeWrite xs i =<< fm recf i
-      return xs
-
 withMemoMutMap :: Int -> Int
-withMemoMutMap n = runST $ do
-   ht <- MHM.newSized (n+1)
-   let recf i = fromJust <$> MHM.lookup ht i
-   forM_ [0..n] $ \i -> MHM.insert ht i =<< fm recf i
-   fromJust <$> MHM.lookup ht n
+withMemoMutMap n = runST $
+   do ht <- MHM.new
+      recF ht n
+   where
+      recF :: MHM.HashTable s Int Int  -> Int -> ST s Int
+      recF ht i = do
+         k <- MHM.lookup ht i
+         case k of
+            Just k' -> return k'
+            Nothing -> do 
+               k' <- fm (recF ht) i
+               MHM.insert ht i k'
+               return k'
 
 
 -- | Edward Kmett's solution from http://stackoverflow.com/questions/3208258/memoization-in-haskell

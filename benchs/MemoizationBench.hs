@@ -15,5 +15,4 @@ memoizationBenchs =
       , bench "withMemoMap"    $ nf withMemoMap n
       , bench "withMemoHMap"   $ nf withMemoHMap n
       , bench "withMemoMutMap" $ nf withMemoMutMap n
-      , bench "withMemoVect"   $ nf withMemoVect n
-      , bench "withMemoMVect"  $ nf withMemoMutVect n ]
+      , bench "withMemoVect"   $ nf withMemoVect n ]
