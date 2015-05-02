@@ -67,13 +67,13 @@ withMemoStMap n = evalState (fm recF n) MS.empty
    where
       recF :: Int -> State (MS.Map Int Int) Int
       recF i = do
-         k <- MS.lookup i <$> get
-         case k of
-            Just k' -> return k' 
+         v <- MS.lookup i <$> get
+         case v of
+            Just v' -> return v' 
             Nothing -> do
-               k' <- fm recF i
-               modify $ MS.insert i k'
-               return k'
+               v' <- fm recF i
+               modify $ MS.insert i v'
+               return v'
  
  
 withMemoStHMap :: Int -> Int
@@ -81,13 +81,13 @@ withMemoStHMap n = evalState (fm recF n) HMS.empty
    where
       recF :: Int -> State (HMS.HashMap Int Int) Int
       recF i = do
-         k <- HMS.lookup i <$> get
-         case k of
-            Just k' -> return k' 
+         v <- HMS.lookup i <$> get
+         case v of
+            Just v' -> return v' 
             Nothing -> do
-               k' <- fm recF i
-               modify $ HMS.insert i k'
-               return k'
+               v' <- fm recF i
+               modify $ HMS.insert i v'
+               return v'
  
 
 -- | Attempts with mutable data structures
