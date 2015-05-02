@@ -22,7 +22,8 @@ executable HaskellTests
                    Memoization,
                    DependentTyping,
                    PhantomType,
-                   ListMonad
+                   ListMonad,
+                   TypeFamilies
 
 test-suite TestSuite
   type:            exitcode-stdio-1.0
@@ -39,7 +40,8 @@ test-suite TestSuite
                   MemoizationTest,
                   DependentTyping,
                   PhantomType,
-                  ListMonad
+                  ListMonad,
+                  TypeFamilies
   hs-source-dirs:  
                   tests,
                   src
@@ -60,5 +62,6 @@ benchmark HaskellTestsBench
                    MemoizationBench,
                    DependentTyping,
                    PhantomType,
-                   ListMonad
+                   ListMonad,
+                   TypeFamilies
 
