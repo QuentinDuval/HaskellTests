@@ -23,7 +23,8 @@ executable HaskellTests
                    DependentTyping,
                    PhantomType,
                    ListMonad,
-                   TypeFamilies
+                   TypeFamilies,
+                   ListComprehension
 
 test-suite TestSuite
   type:            exitcode-stdio-1.0
@@ -41,7 +42,8 @@ test-suite TestSuite
                   DependentTyping,
                   PhantomType,
                   ListMonad,
-                  TypeFamilies
+                  TypeFamilies,
+                  ListComprehension
   hs-source-dirs:  
                   tests,
                   src
@@ -63,5 +65,6 @@ benchmark HaskellTestsBench
                    DependentTyping,
                    PhantomType,
                    ListMonad,
-                   TypeFamilies
+                   TypeFamilies,
+                   ListComprehension
 
