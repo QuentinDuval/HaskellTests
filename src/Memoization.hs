@@ -30,7 +30,7 @@ fm recf n = do
 -- | No memoization of any kind
 
 noMemoF :: Int -> Int
-noMemoF = fix f
+noMemoF = f noMemoF -- or equivalently: fix f
 
 
 -- | Simple lazy data structures

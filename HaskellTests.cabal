@@ -24,7 +24,8 @@ executable HaskellTests
                    PhantomType,
                    ListMonad,
                    TypeFamilies,
-                   ListComprehension
+                   ListComprehension,
+                   PolyvariadicFunction
 
 test-suite TestSuite
   type:            exitcode-stdio-1.0
@@ -43,7 +44,8 @@ test-suite TestSuite
                   PhantomType,
                   ListMonad,
                   TypeFamilies,
-                  ListComprehension
+                  ListComprehension,
+                  PolyvariadicFunction
   hs-source-dirs:  
                   tests,
                   src
@@ -66,5 +68,6 @@ benchmark HaskellTestsBench
                    PhantomType,
                    ListMonad,
                    TypeFamilies,
-                   ListComprehension
+                   ListComprehension,
+                   PolyvariadicFunction
 
