@@ -1,4 +1,4 @@
-{-# LANGUAGE MultiParamTypeClasses, FlexibleContexts, FlexibleInstances, OverloadedStrings #-}
+{-# LANGUAGE MultiParamTypeClasses, FlexibleContexts, FlexibleInstances, OverloadedStrings, InstanceSigs #-}
 
 module PolyvariadicFunction where
 
@@ -15,10 +15,12 @@ class SumRes a r where
 -- For integers
 
 instance SumRes Integer Integer where
-    sumOf = id
+   sumOf :: Integer -> Integer
+   sumOf = id
 
 instance (Integral a, SumRes Integer r) => SumRes Integer (a -> r) where
-    sumOf x = sumOf . (x +) . toInteger
+   sumOf :: Integer -> a -> r
+   sumOf x = sumOf . (x +) . toInteger
 
 
 -- For strings
