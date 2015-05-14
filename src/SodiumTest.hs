@@ -10,27 +10,26 @@ import            FRP.Sodium
 
 
 data Ret = Ret {
-   actions :: [IO()],
    setText :: Text -> Reactive (),
-   setBool :: Bool -> Reactive ()
+   setBool :: Bool -> Reactive (),
+   eventS1 :: Event Text,
+   eventS2 :: Event Text 
 }
 
 
 -- TODO - Run some kind of example with user inputs + a mute on someone + filter one some other variable
 
-example :: (Text -> IO()) -> (Text -> IO()) -> Reactive Ret
-example l1 l2 = do
-   (eventSink :: Event Text, eventSource) <- newEvent
+exampleWorkflow :: Reactive Ret
+exampleWorkflow = do
+   (eventSink, eventSource) <- newEvent
    (behavior, behaviorSource) <- newBehavior True
-   let filteredEventSink = gate eventSink behavior
-   l1' <- listen eventSink l1
-   l2' <- listen filteredEventSink l2
    -- snapshot to associate an event with a behavior
    -- hold to transform an event into a behavior
    return Ret {
-      actions = [l1', l2'],
       setText = eventSource,
-      setBool = behaviorSource }
+      setBool = behaviorSource,
+      eventS1 = eventSink,
+      eventS2 = gate eventSink behavior }
 
 
 
@@ -38,10 +37,15 @@ test :: IO()
 test = do
    let l1 = \(t :: Text) -> putStrLn ("l1: " ++ T.unpack t)
    let l2 = \(t :: Text) -> putStrLn ("l2: " ++ T.unpack t)
-   ret <- sync $ example l1 l2
+   
+   ret <- sync exampleWorkflow
+   sync $ do
+      listen (eventS1 ret) l1
+      listen (eventS2 ret) l2
+      
    sync $ setText ret "a"
    sync $ setBool ret False
    sync $ setText ret "b"
-   void $ sequence (actions ret)
+      
    putStrLn "End"
 
