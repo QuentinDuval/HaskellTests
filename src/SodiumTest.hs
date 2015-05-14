@@ -15,6 +15,9 @@ data Ret = Ret {
    setBool :: Bool -> Reactive ()
 }
 
+
+-- TODO - Run some kind of example with user inputs + a mute on someone + filter one some other variable
+
 example :: (Text -> IO()) -> (Text -> IO()) -> Reactive Ret
 example l1 l2 = do
    (eventSink :: Event Text, eventSource) <- newEvent
