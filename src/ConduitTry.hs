@@ -45,12 +45,11 @@ testConduit input output = do
       $= C.map encodeUtf8 $= sinkHandle output
 
 
-testConduit' :: IO ()
-testConduit' = testConduit stdin stdout
+test1 :: IO()
+test1 = testConduit stdin stdout
 
-
-testConduit'' :: IO()
-testConduit'' =
+test2 :: IO()
+test2 =
    withFile "conduitTest.txt" ReadMode $ \input ->
       withFile "conduitTestOut.txt" WriteMode $ \output ->
          testConduit input output
