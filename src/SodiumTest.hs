@@ -38,14 +38,14 @@ test = do
    let l1 = \(t :: Text) -> putStrLn ("l1: " ++ T.unpack t)
    let l2 = \(t :: Text) -> putStrLn ("l2: " ++ T.unpack t)
    
-   ret <- sync exampleWorkflow
-   sync $ do
-      listen (eventS1 ret) l1
-      listen (eventS2 ret) l2
+   ret <- sync $ do
+      w <- exampleWorkflow
+      void $ listen (eventS1 w) l1
+      void $ listen (eventS2 w) l2
+      return w
       
    sync $ setText ret "a"
    sync $ setBool ret False
    sync $ setText ret "b"
-      
    putStrLn "End"
 
