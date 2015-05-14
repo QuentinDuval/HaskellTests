@@ -19,7 +19,8 @@ executable HaskellTests
                    random >=1.1 && <1.2,
                    transformers >=0.4 && <0.5,
                    conduit-extra >=1.1 && <1.2,
-                   bytestring >=0.10 && <0.11
+                   bytestring >=0.10 && <0.11,
+                   sodium >=0.11 && <0.12
   ghc-options:     -Wall -O2 -rtsopts
   other-modules:   
                    MonoidTest,
@@ -31,7 +32,8 @@ executable HaskellTests
                    TypeFamilies,
                    ListComprehension,
                    PolyvariadicFunction,
-                   ConduitTry
+                   ConduitTry,
+                   SodiumTest
 
 test-suite TestSuite
   type:            exitcode-stdio-1.0
@@ -52,7 +54,8 @@ test-suite TestSuite
                   TypeFamilies,
                   ListComprehension,
                   PolyvariadicFunction,
-                  ConduitTry
+                  ConduitTry,
+                  SodiumTest
   hs-source-dirs:  
                   tests,
                   src
@@ -77,5 +80,6 @@ benchmark HaskellTestsBench
                    TypeFamilies,
                    ListComprehension,
                    PolyvariadicFunction,
-                   ConduitTry
+                   ConduitTry,
+                   SodiumTest
 
