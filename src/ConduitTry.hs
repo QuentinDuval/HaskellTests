@@ -5,7 +5,7 @@ import Control.Monad
 import Control.Monad.Trans.Class(lift)
 import Control.Monad.Trans.State(get, put)
 import Data.Conduit as C
-import Data.Conduit.Binary(sourceHandle, sinkHandle)
+import Data.Conduit.Binary as CB
 import Data.Conduit.List as C (map)
 import Data.Conduit.Lift(evalStateLC)
 import Data.Monoid((<>))
@@ -32,18 +32,27 @@ addRandNumber g = void $ evalStateLC g $
 
 concatBoth :: (Monad m) => Conduit (Text, Int) m Text
 concatBoth = awaitForever $ \(t, n) -> do
-   let t' = TB.fromText t <> " " <> decimal n <> "\n"
+   let t' = TB.fromText (T.init t) <> " " <> decimal n <> "\n"
    yield $ toStrict $ TB.toLazyText t'
 
 
 testConduit :: Handle -> Handle -> IO ()
 testConduit input output = do
    g <- getStdGen 
-   runConduit $ sourceHandle input $$ C.map decodeUtf8
+   runConduit $
+      sourceHandle input $$ CB.lines $= C.map decodeUtf8
       $= addRandNumber g $= concatBoth
       $= C.map encodeUtf8 $= sinkHandle output
 
 
 testConduit' :: IO ()
 testConduit' = testConduit stdin stdout
+
+
+testConduit'' :: IO()
+testConduit'' =
+   withFile "conduitTest.txt" ReadMode $ \input ->
+      withFile "conduitTestOut.txt" WriteMode $ \output ->
+         testConduit input output
+
 
