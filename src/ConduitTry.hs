@@ -20,18 +20,6 @@ import System.Random
 
 -- TODO - Investigate the possibility of parallelism (each stage in a spark)
 
--- Equivalent of sourceHandle
-hSource :: (MonadIO m) => Handle -> Source m ByteString 
-hSource h = addCleanup (const $ liftIO $ hClose h) loop
-   where
-      loop = do
-         eof <- liftIO $ hIsEOF h
-         unless eof $ do
-            str <- liftIO $ B.hGetLine h
-            yield str
-            loop
-
-
 addRandNumber :: (Monad m, RandomGen g) => g -> Conduit Text m (Text, Int)
 addRandNumber = loop where
    loop g = do
@@ -45,20 +33,17 @@ addRandNumber = loop where
 
 
 concatBoth :: (Monad m) => Conduit (Text, Int) m Text
-concatBoth = awaitForever $ \(t, n) ->
-   yield $ T.toStrict $ TB.toLazyText (TB.fromText t <> " " <> decimal n)
-
-
-hSink :: (MonadIO m) => Handle -> Sink Text m ()
-hSink out = awaitForever $ liftIO . B.hPutStrLn out . E.encodeUtf8
+concatBoth = awaitForever $ \(t, n) -> do
+   let t' = TB.fromText t <> " " <> decimal n <> "\n"
+   yield $ T.toStrict $ TB.toLazyText t'
 
 
 testConduit :: Handle -> Handle -> IO ()
 testConduit input output = do
    g <- getStdGen 
-   runConduit $
-      {- hSource input -} sourceHandle input $$ C.map E.decodeUtf8
-      $= addRandNumber g $= concatBoth $= hSink output
+   runConduit $ sourceHandle input $$ C.map E.decodeUtf8
+      $= addRandNumber g $= concatBoth
+      $= C.map E.encodeUtf8 $= sinkHandle output
 
 
 testConduit' :: IO ()
