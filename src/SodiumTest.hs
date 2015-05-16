@@ -49,8 +49,6 @@ test = do
       void $ listen (eventS3 sinks) (listener "l3")
       return sources
       
-   sync $ setText input "Hello"
-   sync $ setBool input False
-   sync $ setText input "World"
-   sync $ setText input "!"
-   return ()
+   mapM_ (sync . setText input) ["Trying", "out"]
+   sync  (setBool input False)
+   mapM_ (sync . setText input) ["Sodium", "!"]
