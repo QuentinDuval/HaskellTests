@@ -40,7 +40,7 @@ exampleWorkflow = do
 
 test :: IO()
 test = do
-   let listener s = putStrLn . ((s ++ ": ") ++) . T.unpack
+   let listener s = putStrLn . (++) (s ++ ": ") . T.unpack
    
    input <- sync $ do
       (sources, sinks) <- exampleWorkflow
