@@ -16,7 +16,8 @@ data Sources = Sources {
 
 data Sinks = Sinks {
    eventS1 :: Event Text,
-   eventS2 :: Event Text 
+   eventS2 :: Event Text,
+   eventS3 :: Event Text
 }
 
 
@@ -28,23 +29,28 @@ exampleWorkflow = do
    (behavior, behaviorSource) <- newBehavior True
    -- snapshot to associate an event with a behavior
    -- hold to transform an event into a behavior
-   return (Sources { setText = eventSource, setBool = behaviorSource},
-           Sinks { eventS1 = eventSink, eventS2 = gate eventSink behavior })
+   return (Sources
+            { setText = eventSource
+            , setBool = behaviorSource},
+           Sinks
+            { eventS1 = eventSink
+            , eventS2 = gate eventSink behavior
+            , eventS3 = filterE (\t -> T.length t <= 3) eventSink})
 
 
 test :: IO()
 test = do
-   let l1 = \(t :: Text) -> putStrLn ("l1: " ++ T.unpack t)
-   let l2 = \(t :: Text) -> putStrLn ("l2: " ++ T.unpack t)
+   let listener s = putStrLn . ((s ++ ": ") ++) . T.unpack
    
    input <- sync $ do
       (sources, sinks) <- exampleWorkflow
-      void $ listen (eventS1 sinks) l1
-      void $ listen (eventS2 sinks) l2
+      void $ listen (eventS1 sinks) (listener "l1")
+      void $ listen (eventS2 sinks) (listener "l2")
+      void $ listen (eventS3 sinks) (listener "l3")
       return sources
       
-   sync $ setText input "a"
+   sync $ setText input "Hello"
    sync $ setBool input False
-   sync $ setText input "b"
-   putStrLn "End"
-
+   sync $ setText input "World"
+   sync $ setText input "!"
+   return ()
