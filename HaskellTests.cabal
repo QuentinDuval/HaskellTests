@@ -59,7 +59,8 @@ test-suite TestSuite
                   PolyvariadicFunction,
                   ConduitTry,
                   SodiumTest,
-                  TextAlgo
+                  TextAlgo,
+                  TextAlgoTests
   hs-source-dirs:  
                   tests,
                   src

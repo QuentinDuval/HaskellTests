@@ -10,7 +10,7 @@ import qualified  Data.Text as T
 
 
 data ExprError = UnknownToken | MissingOperator
-   deriving (Show)
+   deriving (Show, Eq, Ord)
 
 
 dijkstraTwoStack :: (MonadError ExprError m) => Text -> m Int
@@ -35,10 +35,8 @@ dijkstraTwoStack text = loop text [] where
       | otherwise       = return $ head vals
    
 
-test :: String -> Either ExprError Int
-test s = dijkstraTwoStack $ T.pack s
+dijkstraTwoStack' :: Text -> Either ExprError Int
+dijkstraTwoStack' = dijkstraTwoStack
 
-test' :: Either ExprError Int
-test' = test "(2 1 +) 3 * 21 +"
 
 
