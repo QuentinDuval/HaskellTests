@@ -2,6 +2,7 @@
 module Memoization where
 
 import Control.Applicative
+import Control.Monad.Identity
 import Control.Monad.ST
 import Control.Monad.State.Strict
 import Data.Hashable
@@ -28,7 +29,7 @@ fm recf n = do
 -- | No memoization of any kind
 
 noMemoF :: (Integral n) => n -> n
-noMemoF = f noMemoF -- or equivalently: fix f
+noMemoF = runIdentity . fix fm
 
 
 -- | Simple lazy data structures
