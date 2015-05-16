@@ -1,3 +1,4 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 module MemoizationBench where
 
 import Criterion
@@ -11,8 +12,6 @@ memoizationBenchs =
       [ bench "noMemoF"        $ nf noMemoF n
       , bench "withMemoTree"   $ nf withMemoTree n
       , bench "withMemoList"   $ nf withMemoList n
-      , bench "withMemoMap"    $ nf withMemoMap n
-      , bench "withMemoHMap"   $ nf withMemoHMap n
       , bench "withMemoMutMap" $ nf withMemoMutMap n
       , bench "withMemoStMap"  $ nf withMemoStMap n
       , bench "withMemoStHMap" $ nf withMemoStHMap n

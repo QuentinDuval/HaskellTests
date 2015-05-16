@@ -2,12 +2,10 @@
 module Memoization where
 
 import Control.Applicative
-import Control.Monad.Identity
 import Control.Monad.ST
 import Control.Monad.State.Strict
-import qualified Data.Map.Lazy as M
+import Data.Hashable
 import qualified Data.Map.Strict as MS
-import qualified Data.HashMap.Lazy as HM
 import qualified Data.HashMap.Strict as HMS
 import qualified Data.HashTable.ST.Linear as MHM
 import qualified Data.Vector as V
@@ -29,7 +27,7 @@ fm recf n = do
 
 -- | No memoization of any kind
 
-noMemoF :: Int -> Int
+noMemoF :: (Integral n) => n -> n
 noMemoF = f noMemoF -- or equivalently: fix f
 
 
@@ -41,18 +39,6 @@ withMemoList n =
        recf = (!!) xs
    in last xs
 
-withMemoMap :: Int -> Int
-withMemoMap n =
-   let xs = M.fromList [(i, f recf i) | i <- [0..n]]
-       recf = (M.!) xs
-   in xs M.! n
-
-withMemoHMap :: Int -> Int
-withMemoHMap n = 
-   let xs = HM.fromList [(i, f recf i) | i <- [0..n]]
-       recf = (HM.!) xs
-   in xs HM.! n
-
 withMemoVect :: Int -> Int
 withMemoVect n =
    let xs = V.fromList [f recf i | i <- [0..n]]
@@ -62,10 +48,9 @@ withMemoVect n =
 
 -- | Attempts with state monad and immutable associative containers
 
-withMemoStMap :: Int -> Int
+withMemoStMap :: (Integral n) => n -> n
 withMemoStMap n = evalState (fm recF n) MS.empty
    where
-      recF :: Int -> State (MS.Map Int Int) Int
       recF i = do
          v <- MS.lookup i <$> get
          case v of
@@ -76,10 +61,9 @@ withMemoStMap n = evalState (fm recF n) MS.empty
                return v'
  
  
-withMemoStHMap :: Int -> Int
+withMemoStHMap :: (Integral n, Hashable n) => n -> n
 withMemoStHMap n = evalState (fm recF n) HMS.empty
    where
-      recF :: Int -> State (HMS.HashMap Int Int) Int
       recF i = do
          v <- HMS.lookup i <$> get
          case v of
@@ -92,12 +76,11 @@ withMemoStHMap n = evalState (fm recF n) HMS.empty
 
 -- | Attempts with mutable data structures
 
-withMemoMutMap :: Int -> Int
+withMemoMutMap :: (Integral n, Hashable n) => n -> n
 withMemoMutMap n = runST $
    do ht <- MHM.new
       recF ht n
    where
-      recF :: MHM.HashTable s Int Int  -> Int -> ST s Int
       recF ht i = do
          k <- MHM.lookup ht i
          case k of

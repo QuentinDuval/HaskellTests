@@ -9,8 +9,8 @@ import Test.Tasty.HUnit
 
 memoizationTest :: TestTree
 memoizationTest = testCase "" $ do
-   let toTest = [noMemoF, withMemoTree, withMemoList, withMemoMap, withMemoHMap,
-                 withMemoMutMap, withMemoVect, withMemoStMap, withMemoStHMap]
+   let toTest = [withMemoList, withMemoVect, noMemoF, withMemoTree,
+                 withMemoMutMap, withMemoStMap, withMemoStHMap]
    forM_ toTest $ \f' -> assertBool "=" (203708 == f' 100000)
 
 

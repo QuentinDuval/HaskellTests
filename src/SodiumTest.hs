@@ -9,7 +9,6 @@ import            FRP.Sodium
 
 
 
-
 data Sources = Sources {
    setText :: Text -> Reactive (),
    setBool :: Bool -> Reactive ()
@@ -25,7 +24,7 @@ data Sinks = Sinks {
 
 exampleWorkflow :: Reactive (Sources, Sinks)
 exampleWorkflow = do
-   (eventSink, eventSource) <- newEvent
+   (eventSink, eventSource)   <- newEvent
    (behavior, behaviorSource) <- newBehavior True
    -- snapshot to associate an event with a behavior
    -- hold to transform an event into a behavior
