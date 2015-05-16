@@ -22,16 +22,18 @@ data Sources = Sources {
 data Sinks = Sinks {
    eventS1 :: Event Text,
    eventS2 :: Event Text,
-   eventS3 :: Event Text
+   eventS3 :: Event Text,
+   eventS4 :: Event Text
 }
 
-
+-- TODO - Behavior might contain some function, not only values... you could use a behavior map function on an event
 -- TODO - Run some kind of example with user inputs + a mute on someone + filter one some other variable
 
-exampleWorkflow :: Reactive (Sources, Sinks)
-exampleWorkflow = do
+reactiveNetwork :: Reactive (Sources, Sinks)
+reactiveNetwork = do
    (eventSink, eventSource)   <- newEvent
    (behavior, behaviorSource) <- newBehavior True
+   let gateEventSink = (\b -> if b then "Enabled" else "Disabled") <$> value behavior
    -- snapshot to associate an event with a behavior
    -- hold to transform an event into a behavior
    return (Sources
@@ -40,7 +42,8 @@ exampleWorkflow = do
            Sinks
             { eventS1 = eventSink
             , eventS2 = gate eventSink behavior
-            , eventS3 = filterE (\t -> T.length t <= 3) eventSink})
+            , eventS3 = filterE (\t -> T.length t <= 3) eventSink
+            , eventS4 = gateEventSink})
 
 
 userInput :: (MonadIO m) => Source m Text
@@ -70,7 +73,8 @@ test :: IO()
 test = do
    let listener s = B.putStrLn . encodeUtf8 . (<>) (s <> ": ")
    input <- sync $ do
-      (sources, sinks) <- exampleWorkflow
+      (sources, sinks) <- reactiveNetwork
+      void $ listen (eventS4 sinks) (listener "status")
       void $ listen (eventS1 sinks) (listener "l1")
       void $ listen (eventS2 sinks) (listener "l2")
       void $ listen (eventS3 sinks) (listener "l3")
