@@ -28,12 +28,16 @@ data Sinks = Sinks {
 
 -- TODO - Behavior might contain some function, not only values... you could use a behavior map function on an event
 -- TODO - Run some kind of example with user inputs + a mute on someone + filter one some other variable
+-- TODO - Function that adds or concat elements
+-- TODO - Snapshot might be used to apply a behavior function on an event!
+-- TODO - sync creates some kind of transaction: changes are performed after its complete -> how to send new event? create an oscilator
+
 
 reactiveNetwork :: Reactive (Sources, Sinks)
 reactiveNetwork = do
    (eventSink, eventSource)   <- newEvent
    (behavior, behaviorSource) <- newBehavior True
-   let gateEventSink = (\b -> if b then "Enabled" else "Disabled") <$> value behavior
+   let gateEventSink = (T.pack . show) <$> value behavior
    -- snapshot to associate an event with a behavior
    -- hold to transform an event into a behavior
    return (Sources
