@@ -43,6 +43,9 @@ networkCon networkInput = awaitForever (liftIO . sync . networkInput)
 listener :: Text -> Text -> IO()
 listener s = B.putStrLn . encodeUtf8 . (s <>)
 
+partitionE :: (a -> Bool) -> Event a -> (Event a, Event a)
+partitionE p e = (filterE p e, filterE (not . p) e)
+
 
 {-| Reactive network 0 -}
 
@@ -63,7 +66,7 @@ network0 = do
                           "down" -> Just False;
                           _      -> Nothing) <$> nSink
 
-   let eSink = filterE (`notElem` ["on", "off", "up", "down"]) nSink
+   let eSink = {-filterE (`notElem` ["on", "off", "up", "down"])-} nSink
    
    gateStatus <- hold True (filterJust statusEvent)
    caseStatus <- hold False (filterJust caseEvent)
@@ -82,7 +85,7 @@ test0 = do
    input <- sync $ do
       network <- network0
       void $ listen (textOut network)   (listener "> ")
-      void $ listen (statusOut network) (listener "status: ")
+      void $ listen (statusOut network) (listener "On/off: ")
       return (textIn network)
    runConduit $ userInput $$ stopIf ("exit" ==) $= networkCon input
 
