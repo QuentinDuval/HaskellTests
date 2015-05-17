@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings, ScopedTypeVariables, MultiWayIf #-}
+{-# LANGUAGE OverloadedStrings, ScopedTypeVariables, MultiWayIf, LambdaCase #-}
 module SodiumTest where
 
 import            Control.Applicative
@@ -14,6 +14,81 @@ import            FRP.Sodium
 
 
 
+-- TODO - Behavior might contain some function, not only values... you could use a behavior map function on an event
+-- TODO - Run some kind of example with user inputs + a mute on someone + filter one some other variable
+-- TODO - Function that adds or concat elements
+-- TODO - Snapshot might be used to apply a behavior function on an event!
+-- TODO - sync creates some kind of transaction: changes are performed after its complete -> how to send new event? create an oscilator
+
+
+{-| Generic part, used for tests -}
+
+type NetworkInput a = a -> Reactive ()
+
+userInput :: (MonadIO m) => Source m Text
+userInput = forever $
+   yield =<< decodeUtf8 <$> B.init <$> liftIO B.getLine
+
+stopIf :: (Monad m) => (a -> Bool) -> Conduit a m a
+stopIf stopCond = loop where
+   loop = do
+      v <- await
+      case v of
+         Just t  -> unless (stopCond t) $ yield t >> loop
+         Nothing -> return ()
+
+networkCon :: (MonadIO m) => NetworkInput a -> Sink a m ()
+networkCon networkInput = awaitForever (liftIO . sync . networkInput)
+
+listener :: Text -> Text -> IO()
+listener s = B.putStrLn . encodeUtf8 . (s <>)
+
+
+{-| Reactive network 0 -}
+
+data Network0 = Network0 {
+   textIn    :: NetworkInput Text,
+   textOut   :: Event Text,
+   statusOut :: Event Text }
+
+network0 :: Reactive Network0
+network0 = do
+   (nSink, nSource) <- newEvent
+   
+   let statusEvent = (\case "on" -> Just True;
+                            "off" -> Just False;
+                            _ -> Nothing) <$> nSink
+
+   let caseEvent = (\case "up"   -> Just True;
+                          "down" -> Just False;
+                          _      -> Nothing) <$> nSink
+
+   let eSink = filterE (`notElem` ["on", "off", "up", "down"]) nSink
+   
+   gateStatus <- hold True (filterJust statusEvent)
+   caseStatus <- hold False (filterJust caseEvent)
+   
+   let condUpper t b = if b then T.toUpper t else t
+   let textOutput = snapshot condUpper (gate eSink gateStatus) caseStatus
+   
+   return Network0 {
+      textIn = nSource,
+      textOut = textOutput,
+      statusOut = (T.pack . show) <$> value gateStatus }
+
+
+test0 :: IO ()
+test0 = do
+   input <- sync $ do
+      network <- network0
+      void $ listen (textOut network)   (listener "> ")
+      void $ listen (statusOut network) (listener "status: ")
+      return (textIn network)
+   runConduit $ userInput $$ stopIf ("exit" ==) $= networkCon input
+
+
+{-| Reactive network 1 -}
+
 data Sources = Sources {
    setText :: Text -> Reactive (),
    setBool :: Bool -> Reactive ()
@@ -25,13 +100,6 @@ data Sinks = Sinks {
    eventS3 :: Event Text,
    eventS4 :: Event Text
 }
-
--- TODO - Behavior might contain some function, not only values... you could use a behavior map function on an event
--- TODO - Run some kind of example with user inputs + a mute on someone + filter one some other variable
--- TODO - Function that adds or concat elements
--- TODO - Snapshot might be used to apply a behavior function on an event!
--- TODO - sync creates some kind of transaction: changes are performed after its complete -> how to send new event? create an oscilator
-
 
 reactiveNetwork :: Reactive (Sources, Sinks)
 reactiveNetwork = do
@@ -49,33 +117,16 @@ reactiveNetwork = do
             , eventS3 = filterE (\t -> T.length t <= 3) eventSink
             , eventS4 = gateEventSink})
 
-
-userInput :: (MonadIO m) => Source m Text
-userInput = forever $
-   yield =<< decodeUtf8 <$> B.init <$> liftIO B.getLine
-
-
-stopIf :: (Monad m) => (a -> Bool) -> Conduit a m a
-stopIf stopCond = loop where
-   loop = do
-      v <- await
-      case v of
-         Just t  -> unless (stopCond t) $ yield t >> loop
-         Nothing -> return ()
-      
-
 userSink :: (MonadIO m) => Sources -> Sink Text m ()
 userSink input = awaitForever $ \t ->
    liftIO $ sync $
       case t of
-         "on"   -> setBool input True
-         "off"  -> setBool input False
-         _      -> setText input t
+         "on"  -> setBool input True
+         "off" -> setBool input False
+         _     -> setText input t
 
-
-test :: IO()
-test = do
-   let listener s = B.putStrLn . encodeUtf8 . (<>) (s <> ": ")
+test1 :: IO()
+test1 = do
    input <- sync $ do
       (sources, sinks) <- reactiveNetwork
       void $ listen (eventS4 sinks) (listener "status")
@@ -84,3 +135,10 @@ test = do
       void $ listen (eventS3 sinks) (listener "l3")
       return sources
    runConduit $ userInput $$ stopIf ("exit" ==) $= userSink input
+
+
+{-| Reactive network 2 -}
+
+test2 :: IO()
+test2 = do
+   undefined
