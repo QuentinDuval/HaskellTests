@@ -51,43 +51,45 @@ partitionE p e = (filterE p e, filterE (not . p) e)
 
 data Network0 = Network0 {
    textIn    :: NetworkInput Text,
+   statusIn  :: NetworkInput Bool,
+   caseModIn :: NetworkInput Bool,
    textOut   :: Event Text,
    statusOut :: Event Text }
 
+
 network0 :: Reactive Network0
 network0 = do
-   (nSink, nSource) <- newEvent
-   
-   let statusEvent = (\case "on" -> Just True;
-                            "off" -> Just False;
-                            _ -> Nothing) <$> nSink
-
-   let caseEvent = (\case "up"   -> Just True;
-                          "down" -> Just False;
-                          _      -> Nothing) <$> nSink
-
-   let eSink = {-filterE (`notElem` ["on", "off", "up", "down"])-} nSink
-   
-   gateStatus <- hold True (filterJust statusEvent)
-   caseStatus <- hold False (filterJust caseEvent)
-   
+   (textSink, textSource) <- newEvent
+   (gateStatus, statusSource) <- newBehavior True
+   (caseStatus, caseModSource) <- newBehavior False
    let condUpper t b = if b then T.toUpper t else t
-   let textOutput = snapshot condUpper (gate eSink gateStatus) caseStatus
-   
+   let textOutput = snapshot condUpper (gate textSink gateStatus) caseStatus
    return Network0 {
-      textIn = nSource,
+      textIn = textSource,
+      statusIn = statusSource,
+      caseModIn = caseModSource,
       textOut = textOutput,
       statusOut = (T.pack . show) <$> value gateStatus }
 
 
+networkCon0 :: (MonadIO m) => Network0 -> Sink Text m ()
+networkCon0 network = do
+   liftIO . sync $ do
+      void $ listen (textOut network) (listener "> ")
+      void $ listen (statusOut network) (listener "On/off: ")
+   awaitForever $ \t ->
+      liftIO . sync $ case t of
+         "on"   -> statusIn network True
+         "off"  -> statusIn network False
+         "up"   -> caseModIn network True
+         "down" -> caseModIn network False
+         _      -> textIn network t
+
+
 test0 :: IO ()
 test0 = do
-   input <- sync $ do
-      network <- network0
-      void $ listen (textOut network)   (listener "> ")
-      void $ listen (statusOut network) (listener "On/off: ")
-      return (textIn network)
-   runConduit $ userInput $$ stopIf ("exit" ==) $= networkCon input
+   network <- sync network0
+   runConduit $ userInput $$ stopIf ("exit" ==) $= networkCon0 network
 
 
 {-| Reactive network 1 -}
