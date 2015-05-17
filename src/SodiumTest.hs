@@ -49,7 +49,7 @@ partitionE p e = (filterE p e, filterE (not . p) e)
 
 {-| Reactive network 0 -}
 
-data Network0 = Network0 {
+data Network1 = Network1 {
    textIn    :: NetworkInput Text,
    statusIn  :: NetworkInput Bool,
    caseModIn :: NetworkInput Bool,
@@ -57,14 +57,14 @@ data Network0 = Network0 {
    statusOut :: Event Text }
 
 
-network0 :: Reactive Network0
-network0 = do
+network1 :: Reactive Network1
+network1 = do
    (textSink, textSource) <- newEvent
    (gateStatus, statusSource) <- newBehavior True
    (caseStatus, caseModSource) <- newBehavior False
    let condUpper t b = if b then T.toUpper t else t
    let textOutput = snapshot condUpper (gate textSink gateStatus) caseStatus
-   return Network0 {
+   return Network1 {
       textIn = textSource,
       statusIn = statusSource,
       caseModIn = caseModSource,
@@ -72,8 +72,8 @@ network0 = do
       statusOut = (T.pack . show) <$> value gateStatus }
 
 
-networkCon0 :: (MonadIO m) => Network0 -> Sink Text m ()
-networkCon0 network = do
+networkCon1 :: (MonadIO m) => Network1 -> Sink Text m ()
+networkCon1 network = do
    liftIO . sync $ do
       void $ listen (textOut network) (listener "> ")
       void $ listen (statusOut network) (listener "On/off: ")
@@ -86,60 +86,10 @@ networkCon0 network = do
          _      -> textIn network t
 
 
-test0 :: IO ()
-test0 = do
-   network <- sync network0
-   runConduit $ userInput $$ stopIf ("exit" ==) $= networkCon0 network
-
-
-{-| Reactive network 1 -}
-
-data Sources = Sources {
-   setText :: Text -> Reactive (),
-   setBool :: Bool -> Reactive ()
-}
-
-data Sinks = Sinks {
-   eventS1 :: Event Text,
-   eventS2 :: Event Text,
-   eventS3 :: Event Text,
-   eventS4 :: Event Text
-}
-
-reactiveNetwork :: Reactive (Sources, Sinks)
-reactiveNetwork = do
-   (eventSink, eventSource)   <- newEvent
-   (behavior, behaviorSource) <- newBehavior True
-   let gateEventSink = (T.pack . show) <$> value behavior
-   -- snapshot to associate an event with a behavior
-   -- hold to transform an event into a behavior
-   return (Sources
-            { setText = eventSource
-            , setBool = behaviorSource},
-           Sinks
-            { eventS1 = eventSink
-            , eventS2 = gate eventSink behavior
-            , eventS3 = filterE (\t -> T.length t <= 3) eventSink
-            , eventS4 = gateEventSink})
-
-userSink :: (MonadIO m) => Sources -> Sink Text m ()
-userSink input = awaitForever $ \t ->
-   liftIO $ sync $
-      case t of
-         "on"  -> setBool input True
-         "off" -> setBool input False
-         _     -> setText input t
-
-test1 :: IO()
+test1 :: IO ()
 test1 = do
-   input <- sync $ do
-      (sources, sinks) <- reactiveNetwork
-      void $ listen (eventS4 sinks) (listener "status")
-      void $ listen (eventS1 sinks) (listener "l1")
-      void $ listen (eventS2 sinks) (listener "l2")
-      void $ listen (eventS3 sinks) (listener "l3")
-      return sources
-   runConduit $ userInput $$ stopIf ("exit" ==) $= userSink input
+   network <- sync network1
+   runConduit $ userInput $$ stopIf ("exit" ==) $= networkCon1 network
 
 
 {-| Reactive network 2 -}
