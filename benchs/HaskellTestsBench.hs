@@ -1,13 +1,15 @@
 module Main where
 
 
-import Criterion.Main
+import FiboBench
 import MemoizationBench
+
+import Criterion.Main
 import System.IO
 
 
 main :: IO()
 main = do
    hSetEncoding stdout utf8 
-   defaultMain [ memoizationBenchs ]
+   defaultMain [ benchFibo {-, memoizationBenchs-} ]
 

@@ -38,7 +38,8 @@ executable HaskellTests
                    ConduitTry,
                    SodiumTest,
                    TextAlgo,
-                   MarkovChain
+                   MarkovChain,
+                   Fibo
 
 test-suite TestSuite
   type:            exitcode-stdio-1.0
@@ -63,7 +64,8 @@ test-suite TestSuite
                   SodiumTest,
                   TextAlgo,
                   TextAlgoTests,
-                  MarkovChain
+                  MarkovChain,
+                  Fibo
   hs-source-dirs:  
                   tests,
                   src
@@ -91,5 +93,7 @@ benchmark HaskellTestsBench
                    ConduitTry,
                    SodiumTest,
                    TextAlgo,
-                   MarkovChain
+                   MarkovChain,
+                   Fibo,
+                   FiboBench
 
