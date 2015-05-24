@@ -65,7 +65,8 @@ test-suite TestSuite
                   TextAlgo,
                   TextAlgoTests,
                   MarkovChain,
-                  Fibo
+                  Fibo,
+                  FiboTests
   hs-source-dirs:  
                   tests,
                   src

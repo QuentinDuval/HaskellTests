@@ -1,6 +1,6 @@
 module Fibo where
 
-
+import Control.Applicative
 import Control.Monad
 import Control.Monad.Cont
 import Control.Monad.ST
@@ -12,35 +12,32 @@ import Data.STRef
 
 
 fib :: Int -> Integer
-fib 0 = 0
-fib n = snd $ foldl' fibImpl (0,1) [2..n]
+fib n = fst $ foldl' fibImpl (0,1) [1..n]
    where
       fibImpl (a, b) _ = (b, b + a)
 
 
 fibIter :: Int -> Integer
-fibIter 0 = 0
-fibIter n = map snd (iterate fibImpl (0,1)) !! (n-1)
+fibIter n = map fst (iterate fibImpl (0,1)) !! n
    where
       fibImpl (a, b) = (b, b + a)
 
 
 fibState :: Int -> Integer
-fibState 0 = 0
-fibState n = snd $ execState (replicateM (n-1) fibImpl) (0,1)
+fibState n = fst $ execState (replicateM n fibImpl) (0,1)
    where
       fibImpl = modify $ \(a, b) -> (b, b + a)
 
 
 fibCont :: Int -> Integer
-fibCont 0 = 0 
-fibCont n = runCont (fibImpl (n-1) (0,1)) snd
+fibCont n = runCont (fibImpl n (0,1)) fst
    where
       fibImpl 0 (a, b) = return (a, b)
       fibImpl k (a, b) = fibImpl (k-1) (b, b + a)
 
 
 fibST :: Int -> Integer
+fibST 0 = 0
 fibST n = runST $ do
    a <- newSTRef (0 :: Integer)
    b <- newSTRef (1 :: Integer)
@@ -50,6 +47,14 @@ fibST n = runST $ do
       modifySTRef' b (+ a')
    readSTRef b
 
+
+fibST' :: Int -> Integer
+fibST' 0 = 0
+fibST' n = runST $ do
+   res <- newSTRef (0,1)
+   replicateM_ n $
+      modifySTRef' res $ \(a, b) -> (b, a + b)
+   fst <$> readSTRef res
 
 
 
