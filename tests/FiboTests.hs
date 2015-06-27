@@ -9,7 +9,7 @@ import Test.Tasty.HUnit
 
 fiboTest :: TestTree
 fiboTest = testCase "" $ do
-   let toTest = [fib, fibIter, fibState, fibCont, fibST, fibST']
+   let toTest = [fib, fibRec, fibIter, fibState, fibCont, fibST, fibST']
    forM_ toTest $ \f -> do
       assertBool "fib 0"  (0 == f 0)
       assertBool "fib 1"  (1 == f 1)

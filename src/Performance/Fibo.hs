@@ -11,11 +11,17 @@ import Data.STRef
 
 
 
-
 fib :: Int -> Integer
 fib n = fst $ foldl' fibImpl (0,1) [1..n]
    where
       fibImpl (!a, !b) _ = (b, b + a)
+
+
+fibRec :: Int -> Integer
+fibRec n = go n 0 1
+   where
+      go 0  !a _  = a
+      go !k !a !b = go (k - 1) b (a + b)
 
 
 fibIter :: Int -> Integer
@@ -40,11 +46,12 @@ fibCont n = runCont (fibImpl n (0,1)) fst
 fibST :: Int -> Integer
 fibST 0 = 0
 fibST n = runST $ do
-   a <- newSTRef (0 :: Integer)
-   b <- newSTRef (1 :: Integer)
-   replicateM_ (n - 1) $ do
+   a <- newSTRef 0
+   b <- newSTRef 1
+   replicateM_ (n - 1) $! do
       a' <- readSTRef a
-      writeSTRef a =<< readSTRef b
+      b' <- readSTRef b
+      modifySTRef' a (const b')
       modifySTRef' b (+ a')
    readSTRef b
 
@@ -56,6 +63,9 @@ fibST' n = runST $ do
    replicateM_ n $
       modifySTRef' res $ \(a, b) -> (b, a + b)
    fst <$> readSTRef res
+
+
+
 
 
 
