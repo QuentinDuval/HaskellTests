@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings, KindSignatures, DataKinds, GADTs, MultiWayIf #-}
 
-module PhantomType (
+module Tricks.PhantomType (
    User,
    newUser,
    login,

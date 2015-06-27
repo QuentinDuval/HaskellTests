@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-module ConduitTry where
+module Lib.ConduitTry where
 
 import Control.Monad
 import Control.Monad.Trans.Class(lift)

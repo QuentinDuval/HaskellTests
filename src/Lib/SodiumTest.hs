@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings, ScopedTypeVariables, MultiWayIf, LambdaCase #-}
-module SodiumTest where
+module Lib.SodiumTest where
 
 import            Control.Applicative
 import            Control.Monad

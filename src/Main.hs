@@ -1,6 +1,6 @@
 module Main where
 
-import Memoization
+import Performance.Memoization
 
 
 main::IO()

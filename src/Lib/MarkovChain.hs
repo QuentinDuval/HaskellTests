@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-module MarkovChain where
+module Lib.MarkovChain where
 
 import Data.Conduit
 import Data.Conduit.Binary

@@ -1,4 +1,4 @@
-module Fibo where
+module Performance.Fibo where
 
 import Control.Applicative
 import Control.Monad

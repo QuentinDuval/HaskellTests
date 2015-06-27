@@ -1,6 +1,6 @@
 {-# LANGUAGE TypeFamilies, GADTs, RecordWildCards, FlexibleContexts, DataKinds, MultiWayIf, ViewPatterns  #-}
 
-module TypeFamilies where
+module Extensions.TypeFamilies where
 
 import Control.Monad.Error.Class
 

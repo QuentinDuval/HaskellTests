@@ -1,7 +1,7 @@
 {-# LANGUAGE TypeFamilies, DataKinds, UndecidableInstances,
     GADTs, RankNTypes, FlexibleInstances, FlexibleContexts #-}
 
-module DependentTyping where
+module Extensions.DependentTyping where
 
 import Control.Monad.IO.Class
 

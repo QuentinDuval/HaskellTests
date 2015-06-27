@@ -1,7 +1,7 @@
 module FiboBench where
 
 import Criterion.Main
-import Fibo
+import Performance.Fibo
 
 
 benchFibo :: Benchmark

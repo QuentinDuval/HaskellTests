@@ -1,6 +1,6 @@
 module FiboTests where
 
-import Fibo
+import Performance.Fibo
 
 import Control.Monad
 import Test.Tasty

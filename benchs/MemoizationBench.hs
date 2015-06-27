@@ -2,7 +2,7 @@
 module MemoizationBench where
 
 import Criterion
-import Memoization
+import Performance.Memoization
 
 
 memoizationBenchs :: Benchmark

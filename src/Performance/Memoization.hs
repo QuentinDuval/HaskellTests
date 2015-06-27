@@ -1,5 +1,5 @@
 {-# LANGUAGE RecordWildCards, MultiWayIf, ScopedTypeVariables #-}
-module Memoization where
+module Performance.Memoization where
 
 import Control.Applicative
 import Control.Monad.Identity

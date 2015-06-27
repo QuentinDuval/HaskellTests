@@ -1,6 +1,6 @@
 {-# LANGUAGE MultiParamTypeClasses, FlexibleContexts, FlexibleInstances, OverloadedStrings, InstanceSigs #-}
 
-module PolyvariadicFunction where
+module Extensions.PolyvariadicFunction where
 
 import Data.Text
 

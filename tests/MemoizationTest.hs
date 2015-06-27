@@ -1,7 +1,7 @@
 module MemoizationTest where
 
 import Control.Monad
-import Memoization
+import Performance.Memoization
 
 import Test.Tasty
 import Test.Tasty.HUnit

@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module MonoidTest where
+module MonadTry.MonoidTest where
 
 import Data.Foldable
 import Data.Function

@@ -1,6 +1,6 @@
 {-# LANGUAGE MultiWayIf, OverloadedStrings #-}
 
-module MultiwayIf where
+module Extensions.MultiwayIf where
 
 import Control.Applicative
 import Data.Text

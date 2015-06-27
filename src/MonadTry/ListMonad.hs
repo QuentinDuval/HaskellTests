@@ -1,4 +1,4 @@
-module ListMonad where
+module MonadTry.ListMonad where
 
 import Control.Applicative
 import Control.Monad

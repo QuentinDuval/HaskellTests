@@ -1,6 +1,6 @@
 {-# LANGUAGE ParallelListComp, TransformListComp #-}
 
-module ListComprehension where
+module Extensions.ListComprehension where
 
 
 

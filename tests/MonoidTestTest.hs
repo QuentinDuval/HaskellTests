@@ -2,7 +2,7 @@
 
 module MonoidTestTest where
 
-import MonoidTest
+import MonadTry.MonoidTest
 import Test.Tasty
 import Test.Tasty.HUnit
 

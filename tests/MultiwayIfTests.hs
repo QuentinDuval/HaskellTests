@@ -2,7 +2,7 @@
 
 module MultiwayIfTests where
 
-import MultiwayIf
+import Extensions.MultiwayIf
 import Test.Tasty
 import Test.Tasty.HUnit
 
