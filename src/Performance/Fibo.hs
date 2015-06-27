@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns #-}
 module Performance.Fibo where
 
 import Control.Applicative
@@ -14,7 +15,7 @@ import Data.STRef
 fib :: Int -> Integer
 fib n = fst $ foldl' fibImpl (0,1) [1..n]
    where
-      fibImpl (a, b) _ = (b, b + a)
+      fibImpl (!a, !b) _ = (b, b + a)
 
 
 fibIter :: Int -> Integer
