@@ -24,7 +24,8 @@ executable HaskellTests
                    hashable >=1.2 && <1.3,
                    parsec >=3.1 && <3.2,
                    markov-chain >=0.0 && <0.1,
-                   dlist >=0.7 && <0.8
+                   dlist >=0.7 && <0.8,
+                   ListZipper >=1.2 && <1.3
   ghc-options:     -Wall -O2 -rtsopts
   other-modules:   
                    TextAlgo,
@@ -42,7 +43,8 @@ executable HaskellTests
                    Extensions.TypeFamilies,
                    Lib.MarkovChain,
                    Lib.ConduitTry,
-                   Lib.SodiumTest
+                   Lib.SodiumTest,
+                   Container.Zipper
 
 test-suite TestSuite
   type:            exitcode-stdio-1.0
@@ -71,7 +73,8 @@ test-suite TestSuite
                   Extensions.TypeFamilies,
                   Lib.MarkovChain,
                   Lib.ConduitTry,
-                  Lib.SodiumTest
+                  Lib.SodiumTest,
+                  Container.Zipper
   hs-source-dirs:  
                   tests,
                   src
@@ -103,5 +106,6 @@ benchmark HaskellTestsBench
                    Extensions.TypeFamilies,
                    Lib.MarkovChain,
                    Lib.ConduitTry,
-                   Lib.SodiumTest
+                   Lib.SodiumTest,
+                   Container.Zipper
 
