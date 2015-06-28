@@ -56,7 +56,8 @@ test = do
 
    (ps, n) <-
       flip execStateT ([], 0) $
-         sourceList l $$ CL.mapM (zoom _2 . countShort) =$ CL.mapM (zoom _1 . keepPalindroms) =$ sinkNull
+         sourceList l $$ CL.mapM (zoom _2 . countShort)
+                      =$ CL.mapM (zoom _1 . keepPalindroms) =$ sinkNull
 
    print ps
    print n
