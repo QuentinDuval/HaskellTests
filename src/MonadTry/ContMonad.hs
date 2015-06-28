@@ -23,15 +23,7 @@ parseEngine txt =
             runContT (parseEngine t) handler
 
 
-
-parseHandler :: (MonadState Text m) => ParseEvent -> ContT r m Text
-parseHandler OpenBlock   = modify (<> "((") >> get
-parseHandler CloseBlock  = modify (<> "))") >> get
-parseHandler (Content c) = modify (<> singleton c) >> get
-parseHandler Stop        = get
-
-
-indentHandler :: (MonadState Int m) => ParseEvent -> ContT r m Text
+indentHandler :: (MonadState Int m) => ParseEvent -> ContT r m (Maybe Text)
 indentHandler = handle
    where
       handle OpenBlock   = withIndent (0, 1)  "{"
@@ -39,15 +31,13 @@ indentHandler = handle
       handle (Content c) = withIndent (0, 0)  (singleton c <> ";")
       handle Stop = do
          v <- get
-         return $ if v == 0
-            then "[Success]"
-            else "[Failure]"
+         return $ if v == 0 then Just "" else Nothing
       
       withIndent (b, a) c = do
          modify (+b)
          depth <- get
          modify (+a)
-         return $ (T.replicate depth "  ") <> c
+         return . Just $ T.replicate depth "  " <> c
 
 
 sinkHandler :: (MonadIO m, Show a) => a -> m ()
@@ -56,7 +46,7 @@ sinkHandler = liftIO . print
 
 test :: IO ()
 test = do
-   flip runStateT 0 $
-      runContT (parseEngine "[a[ab]c]" >>= indentHandler) sinkHandler
+   flip runStateT (0 :: Int) $
+      runContT (parseEngine "[a[ab]c]" >>= indentHandler) (sinkHandler)
    return ()
 
