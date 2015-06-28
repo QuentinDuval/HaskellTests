@@ -3,11 +3,12 @@ module MonadTry.CompoundState where
 
 import Control.Lens
 import Control.Monad
---import Control.Monad.State
-import Control.Monad.Trans.Class
+--import Control.Monad.State                        -- Does not work with MTL StateT...
+--import Control.Monad.State.Class (MonadState(..)) -- Does not work with MonadState
+import Control.Monad.Trans.Class (MonadTrans (lift))
 import Control.Monad.Trans.State
 import Data.Conduit
-import Data.Conduit.List
+import Data.Conduit.List as CL
 import Data.Text as T
 
 
@@ -25,66 +26,31 @@ withSubState getter setter f = do
 
 -- | CHECK - It might be the same as Control.Lens.Zoom
 -- | zoom :: Monad m             => Lens' s t      -> StateT t m a -> StateT s m a
--- | But it does not work for MonadState!
+-- | But it does not work for MonadState! => Cannot apply it on a Conduit of stateT
 
 
--- | Test
--- | Based on the fact that:
--- MonadState s m => MonadState s (ConduitM i o m)
--- MonadTrans (ConduitM i o)
+countShort :: (Monad m) => Text -> StateT Int m Text
+countShort t = do
+   when (T.length t <= 5) $ modify (+1)
+   return t
 
 
-countShort :: (Monad m) => Conduit Text (StateT Int m) Text
-countShort =
-   awaitForever $ \t -> do
-      when (T.length t > 5) $
-         lift $ modify (+1)
-      yield t
-
-
-countShort' :: (Monad m) => Conduit Text (StateT ([Text], Int) m) Text
-countShort' =
-   awaitForever $ \t -> do
-      when (T.length t > 5) $
-         lift $ zoom _2 $ modify (+1)
-      yield t
-
-
-keepPalindroms :: (Monad m) => Conduit Text (StateT [Text] m) Text
-keepPalindroms =
-   awaitForever $ \t -> do
-      when (T.reverse t == t) $
-         lift $ modify (t:)
-      yield t
-
-
-keepPalindroms' :: (Monad m) => Conduit Text (StateT ([Text], Int) m) Text
-keepPalindroms' =
-   awaitForever $ \t -> do
-      when (T.reverse t == t) $
-         lift $ zoom _1 $ modify (t:)
-      yield t
+keepPalindroms :: (Monad m) => Text -> StateT [Text] m Text
+keepPalindroms t = do
+   when (T.reverse t == t) $ modify (t:)
+   return t
 
 
 test :: IO ()
 test = do
-   print =<< (flip execStateT (1, 2) $ zoom _1 $ id .= 3)
-
    let l = ["a", "ab", "abcdedcba", "zz"]
 
    (ps, n) <-
       runConduit $ 
          flip execStateT ([], 0) $
-            sourceList l $$ countShort' =$ keepPalindroms' =$ sinkNull
+            sourceList l $$ CL.mapM (zoom _2 . countShort) =$ CL.mapM (zoom _1 . keepPalindroms) =$ sinkNull
    
    print ps
    print n
-    
-   {-
-   flip runStateT ([] :: [Text], 0 :: Int) $
-      runConduit $
-         sourceList l $$ (zoom _2 countShort) =$ (zoom _1 keepPalindroms) =$ sinkNull
-   -}
-   return ()
 
 
