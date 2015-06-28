@@ -53,12 +53,10 @@ keepPalindroms t = do
 test :: IO ()
 test = do
    let l = ["a", "ab", "abcdedcba", "zz"]
-
    (ps, n) <-
       flip execStateT ([], 0) $
          sourceList l $$ CL.mapM (zoom _2 . countShort)
                       =$ CL.mapM (zoom _1 . keepPalindroms) =$ sinkNull
-
    print ps
    print n
 
