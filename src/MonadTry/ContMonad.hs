@@ -4,10 +4,23 @@ module MonadTry.ContMonad where
 
 import Control.Monad.Cont
 import Control.Monad.State
+import Control.Monad.Writer
 import Data.Monoid
 import Data.Text as T
 
 
+-- | A monoid instance for Maybe that acts as an alternative 
+
+newtype AltMaybe a = AltMaybe { alt :: Maybe a }
+   deriving (Show, Eq, Ord)
+
+instance (Monoid a) => Monoid (AltMaybe a) where
+   mempty = AltMaybe . Just $ mempty
+   mappend (AltMaybe (Just a)) (AltMaybe (Just b)) = AltMaybe $ Just $ a <> b
+   mappend _ _ = AltMaybe Nothing
+
+
+-- | Parser based on continuation
 
 data ParseEvent = OpenBlock | CloseBlock | Stop | Content Char
 
@@ -26,12 +39,14 @@ parseEngine txt =
 indentHandler :: (MonadState Int m) => ParseEvent -> ContT r m (Maybe Text)
 indentHandler = handle
    where
-      handle OpenBlock   = withIndent (0, 1)  "{"
-      handle CloseBlock  = withIndent (-1, 0) "}"
-      handle (Content c) = withIndent (0, 0)  (singleton c <> ";")
+      handle OpenBlock   = withIndent (0, 1)  "{\n"
+      handle CloseBlock  = withIndent (-1, 0) "}\n"
+      handle (Content c) = withIndent (0, 0)  (singleton c <> ";\n")
       handle Stop = do
          v <- get
-         return $ if v == 0 then Just "" else Nothing
+         return $ if v == 0
+            then Just ""
+            else Nothing
       
       withIndent (b, a) c = do
          modify (+b)
@@ -40,13 +55,22 @@ indentHandler = handle
          return . Just $ T.replicate depth "  " <> c
 
 
-sinkHandler :: (MonadIO m, Show a) => a -> m ()
-sinkHandler = liftIO . print
+sinkHandler :: (MonadWriter (AltMaybe Text) m) => Maybe Text -> m ()
+sinkHandler = tell . AltMaybe
 
+
+-- | Tests
+
+testCase :: Text -> IO (Maybe Text)
+testCase t = do
+   r <- runWriterT $
+      flip runStateT 0 $
+         runContT (parseEngine t >>= indentHandler) sinkHandler
+   return $ alt $ snd r
 
 test :: IO ()
 test = do
-   flip runStateT (0 :: Int) $
-      runContT (parseEngine "[a[ab]c]" >>= indentHandler) (sinkHandler)
-   return ()
+   print =<< testCase "[a[ab]c]"
+   print =<< testCase "[a[ab]c]]"
+   print =<< testCase "[[a[ab]c]"
 
