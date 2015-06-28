@@ -34,23 +34,20 @@ parseHandler Stop        = get
 indentHandler :: (MonadState Int m) => ParseEvent -> ContT r m Text
 indentHandler = handle
    where
-      handle OpenBlock   = do
-         r <- withIndent "{"
-         modIndent 1
-         return r
-      
-      handle CloseBlock  = modIndent (-1) >> withIndent "}"
-      handle (Content c) = withIndent $ singleton c <> ";"
+      handle OpenBlock   = withIndent (0, 1)  "{"
+      handle CloseBlock  = withIndent (-1, 0) "}"
+      handle (Content c) = withIndent (0, 0)  (singleton c <> ";")
       handle Stop = do
          v <- get
          return $ if v == 0
             then "[Success]"
             else "[Failure]"
       
-      modIndent i = modify (+ i)
-      withIndent c = do
-         i <- get
-         return $ (T.replicate i "  ") <> c
+      withIndent (b, a) c = do
+         modify (+b)
+         depth <- get
+         modify (+a)
+         return $ (T.replicate depth "  ") <> c
 
 
 sinkHandler :: (MonadIO m, Show a) => a -> m ()
