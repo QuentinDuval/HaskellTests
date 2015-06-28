@@ -24,16 +24,15 @@ withSubState getter setter f = do
    put (setter fullState newState)
    return res
 
+
 -- | CHECK - It might be the same as Control.Lens.Zoom
 -- | zoom :: Monad m             => Lens' s t      -> StateT t m a -> StateT s m a
 -- | But it does not work for MonadState! => Cannot apply it on a Conduit of stateT
-
 
 countShort :: (Monad m) => Text -> StateT Int m Text
 countShort t = do
    when (T.length t <= 5) $ modify (+1)
    return t
-
 
 keepPalindroms :: (Monad m) => Text -> StateT [Text] m Text
 keepPalindroms t = do
