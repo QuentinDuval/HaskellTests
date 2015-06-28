@@ -25,11 +25,19 @@ withSubState getter setter f = do
    return res
 
 -- TODO - Try with MonadState
+{-
+withSubState' :: Monad m => (s1 -> s2) -> (s1 -> s2 -> s1) -> StateT s2 m a -> StateT s1 m a
+withSubState' getter setter f = do
+   fullState <- get
+   let projState = getter fullState
+   (res, newState) <- lift $ runStateT f projState
+   put (setter fullState newState)
+   return res
+-}
 
-
--- | CHECK - It might be the same as Control.Lens.Zoom
--- | zoom :: Monad m             => Lens' s t      -> StateT t m a -> StateT s m a
+-- | zoom :: Monad m => Lens' s t -> StateT t m a -> StateT s m a
 -- | But it does not work for MonadState! => Cannot apply it on a Conduit of stateT
+-- | And it does not work for Control.Monad.State, just from the transformers package
 
 countShort :: (Monad m) => Text -> StateT Int m Text
 countShort t = do
@@ -50,7 +58,7 @@ test = do
       runConduit $ 
          flip execStateT ([], 0) $
             sourceList l $$ CL.mapM (zoom _2 . countShort) =$ CL.mapM (zoom _1 . keepPalindroms) =$ sinkNull
-   
+
    print ps
    print n
 
