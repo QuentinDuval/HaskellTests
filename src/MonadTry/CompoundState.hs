@@ -1,7 +1,6 @@
 module MonadTry.CompoundState where
 
-
-
+import Control.Lens.Zoom
 import Control.Monad.State
 
 
@@ -18,5 +17,9 @@ withSubState getter setter f = do
    put (setter fullState newState)
    return res
 
+
 -- | CHECK - It might be the same as Control.Lens.Zoom
+
+
+
 

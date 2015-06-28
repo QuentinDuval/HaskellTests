@@ -5,7 +5,6 @@ module MonadTry.ContMonad where
 import Control.Monad.Cont
 import Control.Monad.State
 import Control.Monad.Writer
-import Data.Monoid
 import Data.Text as T
 
 
@@ -20,7 +19,8 @@ instance (Monoid a) => Monoid (AltMaybe a) where
    mappend _ _ = AltMaybe Nothing
 
 
--- | Parser based on continuation
+-- | Example of a parser based on continuation
+-- | This example can be generalized for any kind of behavior needing callbacks 
 
 data ParseEvent = OpenBlock | CloseBlock | Stop | Content Char
 
@@ -59,7 +59,7 @@ sinkHandler :: (MonadWriter (AltMaybe Text) m) => Maybe Text -> m ()
 sinkHandler = tell . AltMaybe
 
 
--- | Tests
+-- | Testing this parser (with a all-or-nothing success)
 
 testCase :: Text -> IO (Maybe Text)
 testCase t = do
