@@ -45,7 +45,8 @@ executable HaskellTests
                    Lib.ConduitTry,
                    Lib.SodiumTest,
                    Container.Zipper,
-                   MonadTry.ContMonad
+                   MonadTry.ContMonad,
+                   MonadTry.CompoundState
 
 test-suite TestSuite
   type:            exitcode-stdio-1.0
@@ -77,7 +78,8 @@ test-suite TestSuite
                   Lib.SodiumTest,
                   Container.Zipper,
                   ListMonadTests,
-                  MonadTry.ContMonad
+                  MonadTry.ContMonad,
+                  MonadTry.CompoundState
   hs-source-dirs:  
                   tests,
                   src
@@ -111,5 +113,6 @@ benchmark HaskellTestsBench
                    Lib.ConduitTry,
                    Lib.SodiumTest,
                    Container.Zipper,
-                   MonadTry.ContMonad
+                   MonadTry.ContMonad,
+                   MonadTry.CompoundState
 
