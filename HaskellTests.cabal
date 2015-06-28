@@ -44,7 +44,8 @@ executable HaskellTests
                    Lib.MarkovChain,
                    Lib.ConduitTry,
                    Lib.SodiumTest,
-                   Container.Zipper
+                   Container.Zipper,
+                   MonadTry.ContMonad
 
 test-suite TestSuite
   type:            exitcode-stdio-1.0
@@ -75,7 +76,8 @@ test-suite TestSuite
                   Lib.ConduitTry,
                   Lib.SodiumTest,
                   Container.Zipper,
-                  ListMonadTests
+                  ListMonadTests,
+                  MonadTry.ContMonad
   hs-source-dirs:  
                   tests,
                   src
@@ -108,5 +110,6 @@ benchmark HaskellTestsBench
                    Lib.MarkovChain,
                    Lib.ConduitTry,
                    Lib.SodiumTest,
-                   Container.Zipper
+                   Container.Zipper,
+                   MonadTry.ContMonad
 
