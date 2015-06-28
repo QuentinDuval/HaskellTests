@@ -24,6 +24,8 @@ withSubState getter setter f = do
    put (setter fullState newState)
    return res
 
+-- TODO - Try with MonadState
+
 
 -- | CHECK - It might be the same as Control.Lens.Zoom
 -- | zoom :: Monad m             => Lens' s t      -> StateT t m a -> StateT s m a
