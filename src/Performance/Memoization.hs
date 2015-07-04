@@ -115,7 +115,7 @@ allTreeIndices = go 0 1 where
                 right = go (pos + level') level'}
 
 treeToList :: InfiniteTree a -> [a]
-treeToList t = treeIdx t <$> [0..]
+treeToList t = treeIdx t <$> [0 :: Int ..]
 
 withMemoTree :: (Integral n) => n -> n
 withMemoTree n =
