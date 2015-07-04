@@ -12,9 +12,9 @@ import Data.STRef
 
 
 fib :: Int -> Integer
-fib n = fst $ foldl' fibImpl (0,1) [1..n]
+fib n = fst $ foldl' next (0,1) [1..n]
    where
-      fibImpl (a, b) _ = (b, b + a)
+      next (a, b) _ = (b, b + a)
 
 
 fibRec :: Int -> Integer
@@ -25,24 +25,23 @@ fibRec n = go n 0 1
 
 
 fibCont :: Int -> Integer
-fibCont n = runCont (go n) snd
+fibCont n = snd $ go n id
    where
-      go 1 = return (0, 1)
-      go k = do
-         (!a, !b) <- go (k - 1)
-         return (b, a + b)
+      next (a, b) = (b, a + b)
+      go 1 c = c  (0, 1)
+      go k c = go (k - 1) (next . c)
 
 
 fibIter :: Int -> Integer
-fibIter n = map fst (iterate fibImpl (0,1)) !! n
+fibIter n = map fst (iterate next (0,1)) !! n
    where
-      fibImpl (a, b) = (b, b + a)
+      next (a, b) = (b, b + a)
 
 
 fibState :: Int -> Integer
-fibState n = fst $ execState (replicateM n fibImpl) (0,1)
+fibState n = fst $ execState (replicateM n next) (0,1)
    where
-      fibImpl = modify $ \(a, b) -> (b, b + a)
+      next = modify $ \(a, b) -> (b, b + a)
 
 
 fibST :: Int -> Integer
