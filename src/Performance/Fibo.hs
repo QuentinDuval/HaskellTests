@@ -14,7 +14,7 @@ import Data.STRef
 fib :: Int -> Integer
 fib n = fst $ foldl' fibImpl (0,1) [1..n]
    where
-      fibImpl (!a, !b) _ = (b, b + a)
+      fibImpl (a, b) _ = (b, b + a)
 
 
 fibRec :: Int -> Integer
@@ -22,6 +22,15 @@ fibRec n = go n 0 1
    where
       go 0  !a _  = a
       go !k !a !b = go (k - 1) b (a + b)
+
+
+fibCont :: Int -> Integer
+fibCont n = runCont (go n) snd
+   where
+      go 1 = return (0, 1)
+      go k = do
+         (!a, !b) <- go (k - 1)
+         return (b, a + b)
 
 
 fibIter :: Int -> Integer
@@ -34,13 +43,6 @@ fibState :: Int -> Integer
 fibState n = fst $ execState (replicateM n fibImpl) (0,1)
    where
       fibImpl = modify $ \(a, b) -> (b, b + a)
-
-
-fibCont :: Int -> Integer
-fibCont n = runCont (fibImpl n (0,1)) fst
-   where
-      fibImpl 0 (a, b) = return (a, b)
-      fibImpl k (a, b) = fibImpl (k-1) (b, b + a)
 
 
 fibST :: Int -> Integer
