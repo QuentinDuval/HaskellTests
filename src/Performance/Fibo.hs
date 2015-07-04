@@ -24,10 +24,10 @@ fibRec n = go n 0 1
 
 
 fibCont :: Int -> Integer
-fibCont n = snd $ go n id
+fibCont n = fst $ go n id
    where
       next (a, b) = (b, a + b)
-      go 1 c = c  (0, 1)
+      go 0 c = c  (0, 1)
       go k c = go (k - 1) (next . c)
 
 

@@ -52,7 +52,7 @@ executable HaskellTests
 test-suite TestSuite
   type:            exitcode-stdio-1.0
   main-is:         TestSuite.hs
-  ghc-options:     -Wall -rtsopts
+  ghc-options:     -Wall -O2 -rtsopts
   build-depends:   base >= 4, tasty >= 0.10.1.1, tasty-hunit, HUnit, tasty-quickcheck, QuickCheck
   other-modules:   
                   Main,
