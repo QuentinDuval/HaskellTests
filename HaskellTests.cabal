@@ -1,6 +1,6 @@
 name:           HaskellTests
 version:        0.1
-cabal-version:  >= 1.2
+cabal-version:  >= 1.6
 build-type:     Simple
 author:         Quentin Duval
 
@@ -27,7 +27,7 @@ executable HaskellTests
                    dlist >=0.7 && <0.8,
                    ListZipper >=1.2 && <1.3,
                    lens >=4.7 && <4.8
-  ghc-options:     -Wall -O2 -rtsopts -fllvm
+  ghc-options:     -Wall -O2
   other-modules:   
                    TextAlgo,
                    Container.DataSequence,
@@ -93,27 +93,28 @@ benchmark HaskellTestsBench
   hs-source-dirs:  
                    benchs, 
                    src
-  ghc-options:     -Odph -fllvm -fforce-recomp -fvectorise
+  ghc-options:     -Wall -O2
   main-is:         HaskellTestsBench.hs
   other-modules:   
-                   HaskellTestsBench,
-                   MemoizationBench,
-                   TextAlgo,
-                   FiboBench,
                    Container.DataSequence,
                    Container.DiffList,
-                   MonadTry.ListMonad,
-                   Extensions.ListComprehension,
+                   Container.Zipper,
                    Extensions.DependentTyping,
+                   Extensions.ListComprehension,
+                   Extensions.MultiwayIf,
                    Extensions.PolyvariadicFunction,
+                   Extensions.TypeFamilies,
+                   FiboBench,
+                   Lib.ConduitTry,
+                   Lib.MarkovChain,
+                   Lib.SodiumTest,
+                   MemoizationBench,
+                   MonadTry.CompoundState,
+                   MonadTry.ContMonad,
+                   MonadTry.ListMonad,
+                   MonadTry.MonoidTest,
                    Performance.Fibo,
                    Performance.Memoization,
-                   Tricks.PhantomType,
-                   Extensions.TypeFamilies,
-                   Lib.MarkovChain,
-                   Lib.ConduitTry,
-                   Lib.SodiumTest,
-                   Container.Zipper,
-                   MonadTry.ContMonad,
-                   MonadTry.CompoundState
+                   TextAlgo,
+                   Tricks.PhantomType
 

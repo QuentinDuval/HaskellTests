@@ -3,7 +3,6 @@ module Performance.Fibo where
 
 import Control.Applicative
 import Control.Monad
-import Control.Monad.Cont
 import Control.Monad.ST
 import Control.Monad.State.Strict
 import Data.List
@@ -30,6 +29,13 @@ fibCont n = snd $ go n id
       next (a, b) = (b, a + b)
       go 1 c = c  (0, 1)
       go k c = go (k - 1) (next . c)
+
+
+fibUnfold :: Int -> Integer
+fibUnfold n = fst $ last $ unfoldr go (0, 1, n + 1)
+   where
+      go (_, _, 0) = Nothing
+      go (a, b, k) = Just ((a, b), (b, a + b, k - 1))
 
 
 fibIter :: Int -> Integer
