@@ -13,7 +13,7 @@ import Data.STRef
 fib :: Int -> Integer
 fib n = fst $ foldl' next (0,1) [1..n]
    where
-      next (a, b) _ = (b, b + a)
+      next (!a, !b) _ = (b, b + a)
 
 
 fibRec :: Int -> Integer
@@ -34,8 +34,8 @@ fibCont n = snd $ go n id
 fibUnfold :: Int -> Integer
 fibUnfold n = fst $ last $ unfoldr go (0, 1, n + 1)
    where
-      go (_, _, 0) = Nothing
-      go (a, b, k) = Just ((a, b), (b, a + b, k - 1))
+      go (_ ,  _,  0) = Nothing
+      go (!a, !b, !k) = Just ((a, b), (b, a + b, k - 1))
 
 
 fibIter :: Int -> Integer
