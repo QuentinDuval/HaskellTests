@@ -51,7 +51,8 @@ executable HaskellTests
                    MonadTry.ContMonad,
                    MonadTry.CompoundState,
                    Lib.DateTime,
-                   Lib.PipeTry
+                   Lib.PipeTry,
+                   MonadTry.ZipList
 
 test-suite TestSuite
   type:            exitcode-stdio-1.0
@@ -86,7 +87,8 @@ test-suite TestSuite
                   MonadTry.ContMonad,
                   MonadTry.CompoundState,
                   Lib.DateTime,
-                  Lib.PipeTry
+                  Lib.PipeTry,
+                  MonadTry.ZipList
   hs-source-dirs:  
                   tests,
                   src
@@ -124,5 +126,6 @@ benchmark HaskellTestsBench
                    TextAlgo,
                    Tricks.PhantomType,
                    Lib.DateTime,
-                   Lib.PipeTry
+                   Lib.PipeTry,
+                   MonadTry.ZipList
 
