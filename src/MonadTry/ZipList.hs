@@ -26,8 +26,8 @@ test = do
    print (variadicList 1 2 3 :: [Int])
    print $ (\a b c -> sum $ variadicList a b c)
       <$> ZipList [1 .. 4 :: Int]
-      <*> ZipList (cycle [-1, 1 :: Int])
-      <*> ZipList [4, 3 .. 1 :: Int]
+      <*> ZipList (cycle [-1, 1])
+      <*> ZipList [4, 3 .. 1]
 
 
 class BuildList a r | r -> a where
