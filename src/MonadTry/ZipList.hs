@@ -1,5 +1,6 @@
 {-# LANGUAGE ParallelListComp #-}
-{-# LANGUAGE MultiParamTypeClasses, FlexibleInstances, FlexibleContexts, InstanceSigs, FunctionalDependencies #-}
+{-# LANGUAGE MultiParamTypeClasses, FlexibleInstances, FlexibleContexts #-}
+{-# LANGUAGE InstanceSigs, FunctionalDependencies #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 module MonadTry.ZipList where
 
@@ -23,12 +24,24 @@ test = do
             | z <- ['a'..'z']]
    
    -- ^ Example using variadic arguments
-   print (variadicList 1 2 3 :: [Int])
+   
    print $ (\a b c -> sum $ variadicList a b c)
       <$> ZipList [1 .. 4 :: Int]
       <*> ZipList (cycle [-1, 1])
       <*> ZipList [4, 3 .. 1]
+      
+   putStrLn $ vList 'x' 'y' 'z'
+   
+   -- Does not work...
+   {-
+   print [(vList x y z)
+            | x <- [1..3 :: Int]
+            | y <- [4, 3 .. 1 :: Int]
+            | z <- [1..4 :: Int]]
+   -}
 
+
+-- | Variadic list builder
 
 class BuildList a r | r -> a where
    buildList :: [a] -> r
@@ -42,6 +55,31 @@ instance BuildList a r => BuildList a (a -> r) where
 
 variadicList :: (BuildList a r) => r
 variadicList = buildList []
+
+
+-- | Trying the variadic from:
+-- | http://w3facility.org/question/polyvariadic-functions-in-haskell/
+
+class Variadic a b r | r -> a where
+   variadic :: ([a] -> b) -> r
+
+instance Variadic a b (a -> b) where
+   variadic :: ([a] -> b) -> a -> b
+   variadic f x = f [x]
+
+instance Variadic a b (a -> r) => Variadic a b (a -> a -> r) where
+   variadic :: ([a] -> b) -> a -> a -> r
+   variadic f x y = variadic (f . (x:)) y
+
+vList :: (Variadic a [a] r) => r
+vList = variadic id
+
+vFoldl :: (Variadic b a r) => (a -> b -> a) -> a -> r
+vFoldl f z = variadic (foldl f z)
+
+vConcat :: (Variadic [a] [a] r) => r
+vConcat = vFoldl (++) []
+
 
 
 {-
