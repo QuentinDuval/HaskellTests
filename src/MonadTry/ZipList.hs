@@ -31,18 +31,18 @@ test = do
 
 
 class BuildList a r | r -> a where
-   buildList :: [a] -> a -> r
+   buildList :: [a] -> r
 
 instance BuildList a [a] where
-   buildList l x = reverse (x:l)
+   buildList = reverse
 
 instance BuildList a r => BuildList a (a -> r) where
    buildList l x = buildList (x:l)
 
-variadicList :: (BuildList a r) => a -> r
+variadicList :: (BuildList a r) => r
 variadicList = buildList []
 
-variadicIntList :: (BuildList a r) => a -> r
+variadicIntList :: (BuildList a r) => r
 variadicIntList = variadicList
 
    
