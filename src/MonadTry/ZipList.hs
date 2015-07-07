@@ -42,8 +42,6 @@ instance BuildList a r => BuildList a (a -> r) where
 variadicList :: (BuildList a r) => r
 variadicList = buildList []
 
-variadicIntList :: (BuildList a r) => r
-variadicIntList = variadicList
 
    
    -- TODO : play with pattern like template method and factories (in other file)
