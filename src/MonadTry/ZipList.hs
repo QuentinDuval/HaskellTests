@@ -37,6 +37,7 @@ instance BuildList a [a] where
    buildList = reverse
 
 instance BuildList a r => BuildList a (a -> r) where
+   buildList :: [a] -> a -> r
    buildList l x = buildList (x:l)
 
 variadicList :: (BuildList a r) => r
