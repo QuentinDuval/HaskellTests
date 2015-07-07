@@ -26,19 +26,26 @@ test = do
    -- ^ Example using variadic arguments
    
    -- sum . variadicList does not work... because you somehow need rank2types?
-   print $ (\a b c -> sum $ variadicList a b c)
+   let sum' a b c = sum $ variadicList a b c
+   print $ sum'
       <$> ZipList [1 .. 4 :: Int]
       <*> ZipList (cycle [-1, 1])
       <*> ZipList [4, 3 .. 1]
-      
-   putStrLn $ vList 'x' 'y' 'z'
    
-   -- Does not work... because you somehow need rank2types?
-   {-
-   print [(vList x y z)
+   putStrLn $ vList 'x' 'y' 'z' -- Signature not needed
+   
+   let sum'' a b c = (vFoldl (+) 0 a b c :: Int) -- Signature is needed for compilation
+   print [sum'' x y z
             | x <- [1..3 :: Int]
             | y <- [4, 3 .. 1 :: Int]
             | z <- [1..4 :: Int]]
+
+   -- Worse: this does not work.
+   {-
+   print $ sum'
+      <$> ZipList [1 .. 4 :: Int]
+      <*> ZipList (cycle [-1, 1])
+      <*> ZipList [4, 3 .. 1]
    -}
 
 
