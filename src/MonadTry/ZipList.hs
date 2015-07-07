@@ -43,5 +43,16 @@ variadicList :: (BuildList a r) => r
 variadicList = buildList []
 
 
+{-
+class BuildList2 r a where
+   buildList2 :: r -> [a]
+
+instance BuildList2 a a where
+   buildList2 x = [x]
+
+instance BuildList2 r a => BuildList2 (a -> r) a where
+   buildList2 = \x -> (x:) . buildList2
+-}
+
    
-   -- TODO : play with pattern like template method and factories (in other file)
+-- TODO : play with pattern like template method and factories (in other file)
