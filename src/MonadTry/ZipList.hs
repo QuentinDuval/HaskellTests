@@ -25,6 +25,7 @@ test = do
    
    -- ^ Example using variadic arguments
    
+   -- sum . variadicList does not work... because you somehow need rank2types?
    print $ (\a b c -> sum $ variadicList a b c)
       <$> ZipList [1 .. 4 :: Int]
       <*> ZipList (cycle [-1, 1])
@@ -32,7 +33,7 @@ test = do
       
    putStrLn $ vList 'x' 'y' 'z'
    
-   -- Does not work...
+   -- Does not work... because you somehow need rank2types?
    {-
    print [(vList x y z)
             | x <- [1..3 :: Int]
