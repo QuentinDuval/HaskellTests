@@ -1,4 +1,6 @@
 {-# LANGUAGE ParallelListComp #-}
+{-# LANGUAGE MultiParamTypeClasses, FlexibleInstances, FlexibleContexts, InstanceSigs, FunctionalDependencies #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 module MonadTry.ZipList where
 
 
@@ -7,12 +9,41 @@ import Control.Applicative
 
 test :: IO ()
 test = do
+
+   -- ^ Example using ZipList monad
    print $ (\a b c -> a * b + c)
       <$> ZipList [1 .. 4 :: Int]
       <*> ZipList (cycle [-1, 1])
       <*> ZipList [4, 3 .. 1]
 
-   print [(x,y) | x <- [1..3 :: Int]
-                | y <- ['a'..'c']]
+   -- ^ Example using ParallelListComp
+   print [(x * y, z)
+            | x <- [1..3 :: Int]
+            | y <- [4, 3 .. 1]
+            | z <- ['a'..'z']]
    
-   -- TODO : use variadic transformation to a list?
+   -- ^ Example using variadic arguments
+   print (variadicList 1 2 3 :: [Int])
+   print $ (\a b c -> sum $ variadicList a b c)
+      <$> ZipList [1 .. 4 :: Int]
+      <*> ZipList (cycle [-1, 1 :: Int])
+      <*> ZipList [4, 3 .. 1 :: Int]
+
+
+class BuildList a r | r -> a where
+   buildList :: [a] -> a -> r
+
+instance BuildList a [a] where
+   buildList l x = reverse (x:l)
+
+instance BuildList a r => BuildList a (a -> r) where
+   buildList l x = buildList (x:l)
+
+variadicList :: (BuildList a r) => a -> r
+variadicList = buildList []
+
+variadicIntList :: (BuildList a r) => a -> r
+variadicIntList = variadicList
+
+   
+   -- TODO : play with pattern like template method and factories (in other file)
