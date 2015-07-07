@@ -52,7 +52,8 @@ instance BuildList2 a a where
    buildList2 x = [x]
 
 instance BuildList2 r a => BuildList2 (a -> r) a where
-   buildList2 = \x -> (x:) . buildList2
+   buildList2 :: (a -> r) -> [a]
+   buildList2 = undefined -- Hard to define...
 -}
 
    
