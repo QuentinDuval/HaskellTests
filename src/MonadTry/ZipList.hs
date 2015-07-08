@@ -23,7 +23,13 @@ test = do
             | y <- [4, 3 .. 1]
             | z <- ['a'..'z']]
    
+   
+   -- ^ Example using transpose
+   -- TODO
+   
+   
    -- ^ Example using variadic arguments
+   -- ^ In the end pretty useless
    
    -- sum . variadicList does not work... because you somehow need rank2types?
    let sum' a b c = sum $ variadicList a b c
