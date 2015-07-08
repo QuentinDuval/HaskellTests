@@ -6,6 +6,7 @@ module MonadTry.ZipList where
 
 
 import Control.Applicative
+import Data.List(transpose)
 
 
 test :: IO ()
@@ -24,8 +25,9 @@ test = do
             | z <- ['a'..'z']]
    
    
-   -- ^ Example using transpose
-   -- TODO
+   -- ^ Example using transpose (does not support cycle though)
+   let inputs = [[1..3 :: Int], [4, 3..2], [-1, 1, -1]]
+   print $ sum <$> transpose inputs
    
    
    -- ^ Example using variadic arguments
