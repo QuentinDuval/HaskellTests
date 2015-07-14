@@ -5,7 +5,7 @@ import Control.Applicative
 
 import Control.Monad.Trans.Resource
 import Control.Monad.Trans.Class(lift)
-import Control.Monad.Trans.State(get, put)
+import Control.Monad.Trans.State(modify')
 
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.ByteString.Builder as BB
@@ -58,21 +58,20 @@ testQuick = withFile "IOPartialSorting.txt" ReadMode $ \h -> do
       print res
       
       where
+         addToHeap nb pair heap =
+            let !toInsert = swap pair
+                Just (h, t) = H.view heap
+            in if H.size heap < nb
+               then H.insert toInsert heap
+               else if h > toInsert
+                  then heap
+                  else H.insert toInsert t
+      
          computeRes :: (Monad m) => Int -> Sink (Text, Int) m [(Text, Int)]
          computeRes nb = do
             let initState = H.empty :: MinPrioHeap Int Text
-            r <- execStateLC initState $ awaitForever $ \pair -> do
-                     heap <- lift get
-                     let !toInsert = swap pair
-                     if H.size heap < nb
-                        then lift $ put $ H.insert toInsert heap
-                        else do
-                           let (Just (h, t)) = H.view heap
-                           if h > toInsert
-                              then return()
-                              else lift $ put $ H.insert toInsert t
-                     
-            return $ reverse $ fmap swap $ H.take nb r
+            r <- execStateLC initState $ awaitForever $ lift . modify' . addToHeap nb
+            return $ reverse $ swap <$> H.take nb r
             
 
 
