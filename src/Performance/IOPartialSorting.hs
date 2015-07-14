@@ -70,6 +70,7 @@ testConduit = withFile "IOPartialSorting.txt" ReadMode $ \h -> do
       print res
       
       where
+         addToHeap :: Int -> (Text, Int) -> MinPrioHeap Int Text -> MinPrioHeap Int Text
          addToHeap nb pair heap =
             let !toInsert = swap pair
                 Just (h, t) = H.view heap
@@ -81,8 +82,7 @@ testConduit = withFile "IOPartialSorting.txt" ReadMode $ \h -> do
       
          computeRes :: (Monad m) => Int -> Sink (Text, Int) m [(Text, Int)]
          computeRes nb = do
-            let initState = H.empty :: MinPrioHeap Int Text
-            r <- execStateLC initState $ awaitForever $ lift . modify' . addToHeap nb
+            r <- execStateLC H.empty $ awaitForever (lift . modify' . addToHeap nb)
             return $ reverse $ swap <$> H.take nb r
 
 

@@ -10,5 +10,6 @@ main = do
    --print res
    
    --testSlow -- 5.36s (354 MB)
-   --testByteString -- 3.5s (307 MB)
+   --testByteString -- 3.61s (307 MB)
    testConduit -- 6.15s (3MB)
+
