@@ -60,6 +60,22 @@ testByteString = do
    print res
 
 
+-- | Test with parsec
+
+testParsec :: IO ()
+testParsec =
+   do inputs <- decodeUtf8 <$> B.readFile "IOPartialSorting.txt"
+      let (Right dataSet) = P.parseOnly (many readLine) inputs
+      let res = take 5000 $ sortBy (flip $ comparing snd) dataSet
+      print res
+   
+readLine :: P.Parser (Text, Int)
+readLine = do
+   txt <- P.takeWhile (not . isSpace) <* P.space
+   val <- P.decimal <* P.skipWhile isSpace
+   return (txt, val)
+
+
 -- | Trying to get faster with conduit
 
 testConduit :: IO ()
@@ -88,23 +104,6 @@ testConduit = withFile "IOPartialSorting.txt" ReadMode $ \h -> do
          computeRes nb = do
             r <- execStateLC H.empty $ awaitForever (lift . modify' . addToHeap nb)
             return $ reverse $ swap <$> H.take nb r
-
-
--- | Test with parsec
-
-testParsec :: IO ()
-testParsec =
-   do inputs <- decodeUtf8 <$> B.readFile "IOPartialSorting.txt"
-      let (Right dataSet) = P.parseOnly (many readLine) inputs
-      let res = take 5000 $ sortBy (flip $ comparing snd) dataSet
-      print res
-   
-readLine :: P.Parser (Text, Int)
-readLine = do
-   txt <- P.takeWhile (not . isSpace) <* P.space
-   val <- P.decimal <* P.skipWhile isSpace
-   return (txt, val)
-
 
 
 -- | To fill an input file
