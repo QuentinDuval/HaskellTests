@@ -54,6 +54,7 @@ testQuick = withFile "IOPartialSorting.txt" ReadMode $ \h -> do
                =$ C.map decodeUtf8
                =$ C.map (take 2 . T.words)
                =$ C.map (\[x,y] -> (x, read (T.unpack y) :: Int))
+               =$ chunksOfConduit 1
                =$ computeRes 5000
       print res
       
@@ -67,12 +68,22 @@ testQuick = withFile "IOPartialSorting.txt" ReadMode $ \h -> do
                   then heap
                   else H.insert toInsert t
       
-         computeRes :: (Monad m) => Int -> Sink (Text, Int) m [(Text, Int)]
+         computeRes :: (Monad m) => Int -> Sink [(Text, Int)] m [(Text, Int)]
          computeRes nb = do
             let initState = H.empty :: MinPrioHeap Int Text
-            r <- execStateLC initState $ awaitForever $ lift . modify' . addToHeap nb
+            r <- execStateLC initState $ awaitForever $
+               \ps -> lift $ mapM_ (modify' . addToHeap nb) ps
             return $ reverse $ swap <$> H.take nb r
             
+
+chunksOfConduit :: Monad m => Int -> Conduit a m [a]
+chunksOfConduit nb = loop []
+   where
+      loop chunk
+         | length chunk >= nb = yield chunk >> loop []
+         | otherwise = do
+            e <- await
+            maybe (yield chunk) (loop . (:chunk)) e
 
 
 -- | To fill an input file
