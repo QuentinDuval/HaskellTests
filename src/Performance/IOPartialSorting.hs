@@ -2,6 +2,7 @@
 module Performance.IOPartialSorting where
 
 import Control.Applicative
+import Control.Arrow
 
 import Control.Monad.Trans.Resource
 import Control.Monad.Trans.Class(lift)
@@ -60,10 +61,11 @@ testByteString = do
 testConduit :: IO ()
 testConduit = withFile "IOPartialSorting.txt" ReadMode $ \h -> do
       res <- runConduit $
-               CB.sourceHandle h $$ CB.lines
+               CB.sourceHandle h
+               $$ CB.lines
                =$ CL.map decodeUtf8
-               =$ CL.map (take 2 . T.words)
-               =$ CL.map (\[x,y] -> (x, read (T.unpack y) :: Int))
+               =$ CL.map (T.breakOn " ")
+               =$ CL.map (second ((read :: String -> Int) . T.unpack))
                =$ chunksOfConduit 1
                =$ computeRes 5000
       print res
