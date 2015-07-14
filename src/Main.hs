@@ -9,5 +9,6 @@ main = do
    --let res = withMemoTree {-10000000-} 12793129379123
    --print res
    
-   -- testSlow -- Takes a whole lot of memory
-   testQuick -- Not quick ! But takes much less memory.
+   --testSlow -- 5.36s (354 MB)
+   --testByteString -- 3.5s (307 MB)
+   testConduit -- 6.61s (3MB)

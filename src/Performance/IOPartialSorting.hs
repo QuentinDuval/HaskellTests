@@ -7,7 +7,7 @@ import Control.Monad.Trans.Resource
 import Control.Monad.Trans.Class(lift)
 import Control.Monad.Trans.State(modify')
 
--- import qualified Data.ByteString as B
+import qualified Data.ByteString as B
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.ByteString.Builder as BB
 
@@ -20,6 +20,7 @@ import Data.Heap(MinPrioHeap)
 import qualified Data.Heap as H
 
 import Data.List as L
+import Data.List.Split(chunksOf)
 import Data.Monoid
 import Data.Ord
 
@@ -28,6 +29,7 @@ import qualified Data.Text as T
 import Data.Text.Encoding
 
 import Data.Tuple(swap)
+import Data.Word8
 
 import System.IO
 
@@ -43,21 +45,20 @@ testSlow = do
    let res = take 5000 $ sortBy (flip $ comparing snd) dataSet
    print res
 
-{-
+
 testByteString :: IO ()
 testByteString = do
-   inputs <- B.lines <$> B.readFile "IOPartialSorting.txt"
-   let dataSet = (\[x,y] -> (x, read y :: Int)) <$> (take 2 . words) <$> inputs
+   inputs <- chunksOf 2 <$> B.splitWith isSpace <$> B.readFile "IOPartialSorting.txt"
+   let decoded = fmap (fmap decodeUtf8) inputs
+   let dataSet = (\[x,y] -> (x, read (T.unpack y) :: Int)) <$> decoded
    let res = take 5000 $ sortBy (flip $ comparing snd) dataSet
    print res
--}
-
 
 
 -- | Trying to get faster with conduit
 
-testQuick :: IO ()
-testQuick = withFile "IOPartialSorting.txt" ReadMode $ \h -> do
+testConduit :: IO ()
+testConduit = withFile "IOPartialSorting.txt" ReadMode $ \h -> do
       res <- runConduit $
                CB.sourceHandle h $$ CB.lines
                =$ CL.map decodeUtf8

@@ -30,7 +30,9 @@ executable HaskellTests
                    time >=1.4 && <1.5,
                    pipes >=4.1 && <4.2,
                    resourcet >=1.1 && <1.2,
-                   heap >=1.0 && <1.1
+                   heap >=1.0 && <1.1,
+                   word8 >=0.1 && <0.2,
+                   split >=0.2 && <0.3
   ghc-options:     -Wall -O2 -rtsopts
   other-modules:   
                    TextAlgo,
