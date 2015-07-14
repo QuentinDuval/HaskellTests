@@ -11,4 +11,4 @@ main = do
    
    --testSlow -- 5.36s (354 MB)
    --testByteString -- 3.5s (307 MB)
-   testConduit -- 6.61s (3MB)
+   testConduit -- 6.15s (3MB)
