@@ -21,8 +21,7 @@ import qualified Data.Conduit.Binary as CB
 import qualified Data.Conduit.List as CL
 import Data.Conduit.Lift
 
-import Data.Heap(MinPrioHeap)
-import qualified Data.Heap as H
+import qualified Data.PQueue.Prio.Min as H
 
 import Data.List as L
 import Data.List.Split(chunksOf)
@@ -90,15 +89,15 @@ testConduit = withFile "IOPartialSorting.txt" ReadMode $ \h -> do
       print res
       
       where
-         addToHeap :: Int -> (Text, Int) -> MinPrioHeap Int Text -> MinPrioHeap Int Text
+         addToHeap :: Int -> (Text, Int) -> H.MinPQueue Int Text -> H.MinPQueue Int Text
          addToHeap nb pair heap =
-            let !toInsert = swap pair
-                Just (h, t) = H.view heap
+            let (v, p) = pair
+                (h, _) = H.findMin heap
             in if H.size heap < nb
-               then H.insert toInsert heap
-               else if h > toInsert
+               then H.insert p v heap
+               else if h > p
                   then heap
-                  else H.insert toInsert t
+                  else H.insert p v (H.deleteMin heap)
       
          computeRes :: (Monad m) => Int -> Sink (Text, Int) m [(Text, Int)]
          computeRes nb = do
