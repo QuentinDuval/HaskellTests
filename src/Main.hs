@@ -9,7 +9,7 @@ main = do
    --let res = withMemoTree {-10000000-} 12793129379123
    --print res
    
-   --testSlow -- 5.36s (354 MB)
-   --testByteString -- 3.61s (307 MB)
-   testConduit -- 6.15s (3MB)
-
+   -- testSlow -- 6.30s (354 MB)
+   -- testByteString -- 4.41s (307 MB)
+   testConduit -- 3.81s (4MB)
+   -- testParsec -- 1.45s (319 MB)

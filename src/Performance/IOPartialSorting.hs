@@ -8,9 +8,13 @@ import Control.Monad.Trans.Resource
 import Control.Monad.Trans.Class(lift)
 import Control.Monad.Trans.State(modify')
 
+import qualified Data.Attoparsec.Text as P
+
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.ByteString.Builder as BB
+
+import Data.Char
 
 import Data.Conduit as C
 import qualified Data.Conduit.Binary as CB
@@ -30,7 +34,7 @@ import qualified Data.Text as T
 import Data.Text.Encoding
 
 import Data.Tuple(swap)
-import Data.Word8
+import qualified Data.Word8 as W8
 
 import System.IO
 
@@ -49,9 +53,9 @@ testSlow = do
 
 testByteString :: IO ()
 testByteString = do
-   inputs <- chunksOf 2 <$> B.splitWith isSpace <$> B.readFile "IOPartialSorting.txt"
+   inputs <- chunksOf 2 <$> B.splitWith W8.isSpace <$> B.readFile "IOPartialSorting.txt"
    let decoded = fmap (fmap decodeUtf8) inputs
-   let dataSet = (\[x,y] -> (x, read (T.unpack y) :: Int)) <$> decoded
+   let dataSet = (\(x:y:_) -> (x, read (T.unpack y) :: Int)) <$> decoded
    let res = take 5000 $ sortBy (flip $ comparing snd) dataSet
    print res
 
@@ -64,8 +68,8 @@ testConduit = withFile "IOPartialSorting.txt" ReadMode $ \h -> do
                CB.sourceHandle h
                $$ CB.lines
                =$ CL.map decodeUtf8
-               =$ CL.map (T.breakOn " ")
-               =$ CL.map (second ((read :: String -> Int) . T.unpack))
+               =$ CL.map (P.parseOnly readLine)
+               =$ CL.map (\(Right r) -> r)
                =$ computeRes 5000
       print res
       
@@ -86,12 +90,28 @@ testConduit = withFile "IOPartialSorting.txt" ReadMode $ \h -> do
             return $ reverse $ swap <$> H.take nb r
 
 
+-- | Test with parsec
+
+testParsec :: IO ()
+testParsec =
+   do inputs <- decodeUtf8 <$> B.readFile "IOPartialSorting.txt"
+      let (Right dataSet) = P.parseOnly (many readLine) inputs
+      let res = take 5000 $ sortBy (flip $ comparing snd) dataSet
+      print res
+   
+readLine :: P.Parser (Text, Int)
+readLine = do
+   txt <- P.takeWhile (not . isSpace) <* P.space
+   val <- P.decimal <* P.skipWhile isSpace
+   return (txt, val)
+
+
 
 -- | To fill an input file
 
 fillInput :: IO ()
 fillInput =
-   do let filler = CL.sourceList [1..1000000]
+   do let filler = CL.sourceList ([1..500000] ++ (reverse [500000..1000000]))
                      $$ CL.map (\c -> ("aaaa", c))
                      =$ CL.map (\(t, c) -> t <> " " <> BB.intDec c <> "\n")
                      =$ CL.map BB.toLazyByteString
