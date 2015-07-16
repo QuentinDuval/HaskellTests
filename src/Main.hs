@@ -6,10 +6,9 @@ import Performance.IOPartialSorting
 
 main::IO()
 main = do
-   --let res = withMemoTree {-10000000-} 12793129379123
-   --print res
+   -- print $ withMemoTree {-10000000-} 12793129379123
    
-   -- testSlow -- 6.30s (354 MB)
-   -- testByteString -- 4.41s (307 MB)
-   -- testParsec -- 1.45s (319 MB)
-   testConduit -- 1.38s (4MB)
+   -- testSlow -- 5.16s (354 MB)
+   -- testByteString -- 3.53s (307 MB)
+   -- testParsec -- 0.88s (313 MB)
+   testConduit -- 1.22s (4MB)
