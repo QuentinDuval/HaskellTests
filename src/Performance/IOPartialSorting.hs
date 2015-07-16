@@ -35,6 +35,10 @@ import Data.Text.Encoding
 import Data.Tuple(swap)
 import qualified Data.Word8 as W8
 
+import qualified Data.Vector as Vect
+import qualified Data.Vector.Mutable as MVect
+import qualified Data.Vector.Algorithms.Intro as VAlgo
+
 import System.IO
 
 
@@ -71,7 +75,7 @@ testParsec =
 readLine :: P.Parser (Text, Int)
 readLine = do
    txt <- P.takeWhile (not . isSpace) <* P.space
-   val <- P.decimal <* P.skipWhile isSpace
+   val <- P.decimal
    return (txt, val)
 
 
