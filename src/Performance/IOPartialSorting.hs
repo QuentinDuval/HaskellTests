@@ -3,14 +3,13 @@ module Performance.IOPartialSorting where
 
 import Control.Applicative
 
-import Control.Exception(evaluate)
 import Control.Monad.Trans.Resource
 import Control.Monad.Trans.Class(lift)
 import Control.Monad.Trans.State(modify')
 
 import qualified Data.Attoparsec.Text as P
 
-import qualified Data.ByteString as B
+import qualified Data.ByteString.Char8 as B
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.ByteString.Builder as BB
 
@@ -33,11 +32,12 @@ import qualified Data.Text as T
 import Data.Text.Encoding
 
 import Data.Tuple(swap)
-import qualified Data.Word8 as W8
 
+{-
 import qualified Data.Vector as Vect
 import qualified Data.Vector.Mutable as MVect
 import qualified Data.Vector.Algorithms.Intro as VAlgo
+-}
 
 import System.IO
 
@@ -56,9 +56,18 @@ testSlow = do
 
 testByteString :: IO ()
 testByteString = do
-   inputs <- chunksOf 2 <$> B.splitWith W8.isSpace <$> B.readFile "IOPartialSorting.txt"
+   inputs <- chunksOf 2 <$> B.splitWith isSpace <$> B.readFile "IOPartialSorting.txt"
    let decoded = fmap (fmap decodeUtf8) inputs
    let dataSet = (\(x:y:_) -> (x, read (T.unpack y) :: Int)) <$> decoded
+   let res = take 5000 $ sortBy (flip $ comparing snd) dataSet
+   print res
+
+
+testByteString' :: IO ()
+testByteString' = do
+   inputs <- chunksOf 2 <$> B.splitWith isSpace <$> B.readFile "IOPartialSorting.txt"
+   let decoded = fmap (fmap decodeUtf8) inputs
+   let dataSet = (\(x:y:_) -> (x, readInt y)) <$> decoded
    let res = take 5000 $ sortBy (flip $ comparing snd) dataSet
    print res
 
@@ -77,6 +86,11 @@ readLine = do
    txt <- P.takeWhile (not . isSpace) <* P.space
    val <- P.decimal
    return (txt, val)
+
+readInt :: Text -> Int
+readInt t =
+   let (Right r) = P.parseOnly P.decimal t
+   in r
 
 
 -- | Trying to get faster with conduit
