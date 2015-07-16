@@ -93,9 +93,8 @@ testConduit = withFile "IOPartialSorting.txt" ReadMode $ \h -> do
             let (h, _) = H.findMin heap
             in if H.size heap < nb
                then H.insert p v heap
-               else if h > p
-                  then heap
-                  else H.insert p v (H.deleteMin heap)
+               else if h > p then heap
+               else H.insert p v (H.deleteMin heap)
       
          computeRes :: (Monad m) => Int -> Sink (Text, Int) m [(Text, Int)]
          computeRes nb = do
