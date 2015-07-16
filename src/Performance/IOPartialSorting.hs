@@ -2,7 +2,6 @@
 module Performance.IOPartialSorting where
 
 import Control.Applicative
-import Control.Arrow
 
 import Control.Monad.Trans.Resource
 import Control.Monad.Trans.Class(lift)
@@ -90,9 +89,8 @@ testConduit = withFile "IOPartialSorting.txt" ReadMode $ \h -> do
       
       where
          addToHeap :: Int -> (Text, Int) -> H.MinPQueue Int Text -> H.MinPQueue Int Text
-         addToHeap nb pair heap =
-            let (v, p) = pair
-                (h, _) = H.findMin heap
+         addToHeap nb (v, p) heap =
+            let (h, _) = H.findMin heap
             in if H.size heap < nb
                then H.insert p v heap
                else if h > p

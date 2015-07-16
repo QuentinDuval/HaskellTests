@@ -12,4 +12,4 @@ main = do
    -- testSlow -- 6.30s (354 MB)
    -- testByteString -- 4.41s (307 MB)
    -- testParsec -- 1.45s (319 MB)
-   testConduit -- 2.06s (4MB)
+   testConduit -- 1.38s (4MB)
