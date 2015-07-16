@@ -3,6 +3,7 @@ module Performance.IOPartialSorting where
 
 import Control.Applicative
 
+import Control.Exception(evaluate)
 import Control.Monad.Trans.Resource
 import Control.Monad.Trans.Class(lift)
 import Control.Monad.Trans.State(modify')
@@ -106,7 +107,7 @@ testConduit = withFile "IOPartialSorting.txt" ReadMode $ \h -> do
 
 fillInput :: IO ()
 fillInput =
-   do let filler = CL.sourceList ([1..500000] ++ (reverse [500000..1000000]))
+   do let filler = CL.sourceList ([1..500000] ++ reverse [500000..1000000])
                      $$ CL.map (\c -> ("aaaa", c))
                      =$ CL.map (\(t, c) -> t <> " " <> BB.intDec c <> "\n")
                      =$ CL.map BB.toLazyByteString
