@@ -2,6 +2,7 @@
 module Performance.IOPartialSorting where
 
 import Control.Applicative
+import Control.Arrow
 
 import Control.Monad.Trans.Resource
 import Control.Monad.Trans.Class(lift)
@@ -72,6 +73,15 @@ testByteString' = do
    print res
 
 
+testByteString'' :: IO ()
+testByteString'' = do
+   inputs <- fmap (B.break isSpace) <$> B.lines <$> B.readFile "IOPartialSorting.txt"
+   let dataSet = second (readInt . decodeUtf8 . B.tail) <$> inputs
+   let res = take 5000 $ sortBy (flip $ comparing snd) dataSet
+   print res
+   -- return ()
+
+
 -- | Test with parsec
 
 testParsec :: IO ()
@@ -89,8 +99,10 @@ readLine = do
 
 readInt :: Text -> Int
 readInt t =
-   let (Right r) = P.parseOnly P.decimal t
-   in r
+   let r = P.parseOnly P.decimal t
+   in case r of
+      Left e -> error (T.unpack t)
+      Right r' -> r'
 
 
 -- | Trying to get faster with conduit
