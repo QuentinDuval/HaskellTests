@@ -12,5 +12,8 @@ main = do
    -- testByteString -- 3.53s (307 MB)
    -- testByteString' -- 0.73s (283 MB)
    testByteString'' -- 0.61s (183 MB)
+   
+   -- TODO - Try to parsec the bytestring
+   
    -- testParsec -- 0.88s (313 MB)
    -- testConduit -- 1.22s (4MB)

@@ -17,10 +17,10 @@ fib n = fst $ foldl' next (0,1) [1..n]
 
 
 fibRec :: Int -> Integer
-fibRec n = go n 0 1
+fibRec = go 0 1
    where
-      go 0  !a _  = a
-      go !k !a !b = go (k - 1) b (a + b)
+      go !a _  0  = a
+      go !a !b !k = go b (a + b) (k - 1)
 
 
 fibCont :: Int -> Integer
