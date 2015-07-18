@@ -6,8 +6,8 @@ import Performance.Fibo
 
 benchFibo :: Benchmark
 benchFibo =
-   let iter = 2000
-   in bgroup "fibo (of 2000)" 
+   let iter = 4000
+   in bgroup "fibo (of 4000)" 
       [bench "fib"         $ nf fib iter,
        bench "fibRec"      $ nf fibRec iter,
        bench "fibUnfold"   $ nf fibUnfold iter,
