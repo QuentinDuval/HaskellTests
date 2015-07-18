@@ -15,4 +15,4 @@ benchFibo =
        bench "fibState"    $ nf fibState iter,
        bench "fibCont"     $ nf fibCont iter,
        bench "fibST"       $ nf fibST iter,
-       bench "fibST'"      $ nf fibST' iter]
+       bench "fibFast"     $ nf fibFast iter]

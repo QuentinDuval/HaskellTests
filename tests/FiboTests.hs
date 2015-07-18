@@ -11,7 +11,7 @@ fiboTest :: TestTree
 fiboTest = testCase "" $ do
    let toTest = [fib, fibRec, fibIter
                  ,fibUnfold, fibState
-                 ,fibCont, fibST, fibST']
+                 ,fibCont, fibST, fibFast]
    forM_ toTest $ \f -> do
       assertBool "fib 0"  (0 == f 0)
       assertBool "fib 1"  (1 == f 1)
