@@ -36,15 +36,13 @@ fibFast = fibVal . fibPow
       -- Fast exponentiation
       fibPow n
          | n <= 0    = (1, 0, 0, 1) -- Identity matrix
-         | even n    = fibSq $! fibPow (div n 2)
-         | otherwise = fibMult fibMat $! fibPow (n - 1)
+         | odd n     = fibMult fibMat $! fibPow (n - 1)
+         | otherwise = fibSq $! fibPow (div n 2)
       
       fibSq m = fibMult m m
       fibMult (a , b , c , d ) (a', b', c', d')
          = ( a * a' + b * c', a * b' + b * d'
            , c * a' + d * c', c * b' + d * d')
-
-
 
 
 fibCont :: Int -> Integer
