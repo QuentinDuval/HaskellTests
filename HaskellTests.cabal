@@ -60,7 +60,8 @@ executable HaskellTests
                    Lib.DateTime,
                    Lib.PipeTry,
                    MonadTry.ZipList,
-                   Performance.IOPartialSorting
+                   Performance.IOPartialSorting,
+                   Composition.Types
 
 test-suite TestSuite
   type:            exitcode-stdio-1.0
@@ -97,7 +98,8 @@ test-suite TestSuite
                   Lib.DateTime,
                   Lib.PipeTry,
                   MonadTry.ZipList,
-                  Performance.IOPartialSorting
+                  Performance.IOPartialSorting,
+                  Composition.Types
   hs-source-dirs:  
                   tests,
                   src
@@ -137,5 +139,6 @@ benchmark HaskellTestsBench
                    Lib.DateTime,
                    Lib.PipeTry,
                    MonadTry.ZipList,
-                   Performance.IOPartialSorting
+                   Performance.IOPartialSorting,
+                   Composition.Types
 
