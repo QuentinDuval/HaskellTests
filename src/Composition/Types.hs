@@ -66,6 +66,13 @@ hcomp :: (B -> C) -> (a -> A -> B) -> (a -> A -> C)
 hcomp = compL . compR
 
 
+-- | Fmap dot Fmap
+
+fmap' :: (Functor f, Functor g) => (a -> b) -> f (g a) -> f (g b)
+fmap' = fmap . fmap
+
+
+
 -- | Examples
 
 (...) :: (b -> c) -> (a1 -> a -> b) -> a1 -> a -> c
@@ -78,8 +85,8 @@ compTest :: IO()
 compTest = do
    print $ ((*2) ... (+)) 1 2
    print $ ((+) >-> (*2)) 1 2
+   print $ (fmap . fmap) (+1) [[1, 2], [3, 4]]
 
 
--- TODO: fmap . fmap
 
 
