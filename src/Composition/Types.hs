@@ -1,6 +1,11 @@
 {-# LANGUAGE EmptyDataDecls #-}
 module Composition.Types where
 
+import Control.Applicative
+import Control.Monad
+import Data.Foldable
+import Data.Monoid
+import Data.Traversable
 
 
 -- | Dummy data types
@@ -68,9 +73,16 @@ hcomp = compL . compR
 
 -- | Fmap dot Fmap
 
-fmap' :: (Functor f, Functor g) => (a -> b) -> f (g a) -> f (g b)
-fmap' = fmap . fmap
+fmap2 :: (Functor f, Functor g) => (a -> b) -> f (g a) -> f (g b)
+fmap2 = fmap . fmap
 
+fold2 :: (Foldable f, Foldable g, Monoid m) => (a -> m) -> f (g a) -> m
+fold2 = foldMap . foldMap
+
+traverse2 ::
+   (Traversable t, Traversable u, Applicative m) =>
+   (a -> m b) -> t (u a) -> m (t (u b))
+traverse2 = traverse . traverse
 
 
 -- | Examples
@@ -86,7 +98,6 @@ compTest = do
    print $ ((*2) ... (+)) 1 2
    print $ ((+) >-> (*2)) 1 2
    print $ (fmap . fmap) (+1) [[1, 2], [3, 4]]
-
-
-
+   print $ (foldMap . foldMap) Sum [[1, 2], [3, 4]]
+   void $ (traverse . traverse) print [[1, 2], [3, 4]]
 
